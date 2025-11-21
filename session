@@ -1,0 +1,66 @@
+#!/bin/bash
+# Workspace session helper - makes `session start|end` available from PATH.
+
+set -euo pipefail
+
+usage() {
+    cat <<'EOF'
+usage: session <command> [args]
+
+Commands:
+  start [options]   Run workspace/session_start.sh with the given options
+  end [options]     Run workspace/session_end.sh with the given options
+
+Examples:
+  session start
+  session start --auto-ack
+  session end
+
+Ensure this script is on your PATH (e.g. `export PATH="/path/to/data-projects:$PATH"`
+or symlink it into a bin directory).
+EOF
+}
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
+cmd="$1"
+shift || true
+
+# Resolve workspace root even if this script is symlinked elsewhere.
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+WORKSPACE_ROOT="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+START_SCRIPT="$WORKSPACE_ROOT/session_start.sh"
+END_SCRIPT="$WORKSPACE_ROOT/session_end.sh"
+
+case "$cmd" in
+    start)
+        exec "$START_SCRIPT" "$@"
+        ;;
+    end)
+        if [ -x "$END_SCRIPT" ]; then
+            exec "$END_SCRIPT" "$@"
+        else
+            echo "session: session_end.sh not found or not executable at $END_SCRIPT" >&2
+            exit 1
+        fi
+        ;;
+    -h|--help|help)
+        usage
+        ;;
+    *)
+        echo "session: unknown command '$cmd'" >&2
+        usage
+        exit 1
+        ;;
+esac
+
+

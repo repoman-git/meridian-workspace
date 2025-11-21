@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+workspace/.venv/
+.venv/
+.env
+meridian-core/
+meridian-research/
+meridian-trading/
+Meridian-Core-Operations/
+meridian/

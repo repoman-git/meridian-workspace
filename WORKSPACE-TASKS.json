@@ -1,0 +1,1228 @@
+[
+  {
+    "id": "WS-TASK-001",
+    "title": "Implement unified workspace task tracking system",
+    "description": null,
+    "status": "completed",
+    "priority": "HIGH",
+    "repos_affected": [
+      "workspace-root"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T21:07:47.847151",
+    "updated": "2025-11-21T10:58:29.404963",
+    "session_created": "2025-11-20-session-001",
+    "assigned_to": null,
+    "notes": "Creating workspace-level tracking files to avoid silos",
+    "related_files": [
+      "WORKSPACE-TASKS.json",
+      "SESSION-LOG.json",
+      "CROSS-REPO-ISSUES.json",
+      "ARCHITECTURE-DECISIONS.json"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-002",
+    "title": "Implement TradingLearningEngine in meridian-trading",
+    "description": null,
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading",
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T21:07:47.848623",
+    "updated": "2025-11-21T10:58:29.405443",
+    "session_created": "2025-11-20-session-001",
+    "assigned_to": null,
+    "notes": "Self-learning for trading domain - identified as missing component | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-003",
+    "title": "Consolidate task tracking across repos",
+    "description": null,
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core",
+      "meridian-research",
+      "meridian-trading"
+    ],
+    "dependencies": [
+      "WS-TASK-001"
+    ],
+    "created": "2025-11-20T21:07:47.849051",
+    "updated": "2025-11-21T10:58:29.405593",
+    "session_created": "2025-11-20-session-001",
+    "assigned_to": null,
+    "notes": "Multiple TASK-QUEUE.json files found - need unified approach | CLOSED: Superseded by WMS implementation and workspace database.",
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-004",
+    "title": "meridian-trading self-learning NOT IMPLEMENTED",
+    "description": "- **Impact:** Trading domain can't learn from performance\n\nSource: ARCHITECTURE-REVIEW-2025-11-20.md",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.988998",
+    "updated": "2025-11-21T10:58:29.405666",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: critical_issue | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [
+      "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-005",
+    "title": "Database Consolidation and WMS Completion",
+    "description": "Comprehensive database work: consolidate proposal schemas, migrate JSON sources to SQLAlchemy, standardize naming, finish WMS CLI/governance integration, and document usage.",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.992077",
+    "updated": "2025-11-21T10:58:29.405778",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: critical_issue | Consolidated task covering WS-TASK-043/044/045 and WMS governance.",
+    "related_files": [
+      "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-006",
+    "title": "Learning Integration Gaps",
+    "description": "- meridian-research learning may not fully integrate with core\n\nSource: ARCHITECTURE-REVIEW-2025-11-20.md",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-research"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.992806",
+    "updated": "2025-11-21T10:58:29.405869",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: critical_issue",
+    "related_files": [
+      "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-007",
+    "title": "Immediate:",
+    "description": "Immediate:** Implement meridian-trading self-learning\n\nSource: ARCHITECTURE-REVIEW-2025-11-20.md",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.993448",
+    "updated": "2025-11-21T10:58:29.405916",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: next_step | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [
+      "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-008",
+    "title": "Short-term:",
+    "description": "Short-term:** Verify and complete meridian-research integration\n\nSource: ARCHITECTURE-REVIEW-2025-11-20.md",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-research"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.994082",
+    "updated": "2025-11-20T22:17:33.994387",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: next_step",
+    "related_files": [
+      "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-009",
+    "title": "Medium-term:",
+    "description": "Medium-term:** Consolidate databases and improve documentation\n\nSource: ARCHITECTURE-REVIEW-2025-11-20.md",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.994704",
+    "updated": "2025-11-20T22:17:33.995003",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: next_step",
+    "related_files": [
+      "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-010",
+    "title": "AI agents don't check docs first** - Start coding before reading governance\n2. **Docs not \"injected\" into context** - Not automatically included in prompts\n3. **No enforcement mechanism** - Docs are s",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Work done in one session not clearly documented for next session\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.995320",
+    "updated": "2025-11-21T10:58:29.406050",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-011",
+    "title": "Read SESSION-LOG.json** - See what happened in last session\n2. **Read WORKSPACE-TASKS.json** - See active tasks and decisions\n3. **Read CROSS-REPO-ISSUES.json** - See known issues\n4. **Review ARCHITEC",
+    "description": "Problem 1: Fragmented Task Tracking\n\n#### Problem: Docs Exist But Not Followed\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.996358",
+    "updated": "2025-11-21T10:58:29.406051",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-012",
+    "title": "Component Placement (ADR-001)",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Core: Generic, domain-agnostic\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.997158",
+    "updated": "2025-11-21T10:58:29.406051",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-013",
+    "title": "Import Rules",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Core: Cannot import domain adapters\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.997854",
+    "updated": "2025-11-21T10:58:29.406052",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-014",
+    "title": "Session Protocol",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Read SESSION-LOG.json first\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.998494",
+    "updated": "2025-11-21T10:58:29.406052",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-015",
+    "title": "State the goal** - \"I need to implement X\"\n2. **Request governance check** - \"Please verify placement per ADR-001\"\n3. **Request plan** - \"Create a plan per AI-GUIDELINES.md\"\n4. **Request documentation",
+    "description": "Problem 1: Fragmented Task Tracking\n\n#### CROSS-REPO-ISSUES.json\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.999115",
+    "updated": "2025-11-21T10:58:29.406052",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-016",
+    "title": "Intent**: \"I want to...\"\n2. **Governance Check**: \"Please verify per ADR-001...\"\n3. **Context Check**: \"Check for similar work in...\"\n4. **Planning**: \"Create a plan per AI-GUIDELINES.md...\"\n5. **Docu",
+    "description": "Problem 1: Fragmented Task Tracking\n\n```\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:33.999749",
+    "updated": "2025-11-21T10:58:29.406053",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Malformed task from bulk import. Content captured in governance docs.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-017",
+    "title": "Test session handoff protocol",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Start session by reading SESSION-LOG.json\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.000372",
+    "updated": "2025-11-21T10:58:29.406053",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-018",
+    "title": "Create governance check script",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- `scripts/governance_check.py`\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.000994",
+    "updated": "2025-11-21T10:58:29.406053",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-019",
+    "title": "Update AI-GUIDELINES.md",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Add mandatory checklist\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.001616",
+    "updated": "2025-11-21T10:58:29.406054",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-020",
+    "title": "Enforce governance checks",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Run before every commit\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.002234",
+    "updated": "2025-11-21T10:58:29.406054",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-021",
+    "title": "Improve documentation",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Add communication templates\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.002861",
+    "updated": "2025-11-21T10:58:29.406054",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-022",
+    "title": "Workspace-level task tracking",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- `WORKSPACE-TASKS.json` - Unified task view\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.003504",
+    "updated": "2025-11-21T10:58:29.406055",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Superseded by WMS implementation and workspace database.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-023",
+    "title": "Enhanced governance enforcement",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Mandatory pre-task checklist\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.004149",
+    "updated": "2025-11-21T10:58:29.406055",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-024",
+    "title": "Better communication patterns",
+    "description": "Problem 1: Fragmented Task Tracking\n\n- Communication framework\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.004799",
+    "updated": "2025-11-21T10:58:29.406055",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: WMS governance engine now enforces this automatically.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-025",
+    "title": "Create workspace tracking files** (this session)\n2. **Document this session** in SESSION-LOG.json\n3. **Create GOVERNANCE-CONTEXT.md",
+    "description": "Problem 1: Fragmented Task Tracking\n\n4. **Update session_start.sh** to read governance context\n\nSource: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.005588",
+    "updated": "2025-11-21T10:58:29.406056",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance_recommendation | CLOSED: Superseded by WMS implementation and workspace database.",
+    "related_files": [
+      "/Users/simonerses/data-projects/2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-026",
+    "title": "Unified Persistence Layer",
+    "description": "Migrate task_queue/registry to SQLite to fix concurrency/file I/O issues. *Files: orchestrator.py, autonomous_orchestrator.py*. *Effort: 2 days*.\n\nEstimated effort: 2 days\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.006399",
+    "updated": "2025-11-20T22:17:34.006735",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-027",
+    "title": "Add Comprehensive Tests",
+    "description": "Achieve >80% coverage; focus on integration flows. *New: tests/ directory*. *Effort: 3-5 days*.\n\nEstimated effort: 3-5 days\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.007071",
+    "updated": "2025-11-20T22:17:34.007417",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-028",
+    "title": "Refactor AutonomousOrchestrator",
+    "description": "Split into composable classes to reduce god-class complexity. *File: autonomous_orchestrator.py*. *Effort: 1-2 days*.\n\nEstimated effort: 1-2 days\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.007740",
+    "updated": "2025-11-20T22:17:34.008041",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-029",
+    "title": "Improve Error Propagation",
+    "description": "Custom exceptions and logging everywhere; no more swallowed errors. *Files: All*. *Effort: 1 day*.\n\nEstimated effort: 1 day\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.008354",
+    "updated": "2025-11-20T22:17:34.008653",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-030",
+    "title": "Enhance Pattern Detection",
+    "description": "Add statistical thresholds and correlations in learning. *File: orchestration_learning_engine.py*. *Effort: 1 day*.\n\nEstimated effort: 1 day\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.008969",
+    "updated": "2025-11-20T22:17:34.009265",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-031",
+    "title": "Security Hardening",
+    "description": "Path validation, prompt escaping, DB encryption. *Files: autonomous_orchestrator.py, meta_review.py*. *Effort: 1 day*.\n\nEstimated effort: 1 day\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.009581",
+    "updated": "2025-11-20T22:17:34.009881",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-032",
+    "title": "Caching and Optimization",
+    "description": "LRU for loads, bulk operations for agent selection. *Files: orchestrator.py, allocation.py*. *Effort: 4 hours*.\n\nEstimated effort: 4 hours\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.010198",
+    "updated": "2025-11-20T22:17:34.010502",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-033",
+    "title": "Documentation Overhaul",
+    "description": "Add diagrams, examples, Sphinx API docs. *New: docs/architecture.md*. *Effort\n\nSource: review_architecture_20251116_094525.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.010832",
+    "updated": "2025-11-20T22:17:34.011126",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: critical_recommendation",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/reviews/review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-034",
+    "title": "TODO: Preflight Checks - Missing Implementations \u2705 FIXED",
+    "description": "Location: `src/meridian_core/orchestration/preflight.py`\nLines: 338, 350, 362, 374\n\n**Status:** \u2705 **DOCUMENTED** (2025-11-16)\n\nSource: TODO_REVIEW.md",
+    "status": "closed",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.011460",
+    "updated": "2025-11-21T10:58:29.406056",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: TODO_REVIEW.md\nType: todo | CLOSED: Already implemented per TODO review.",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/TODO_REVIEW.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-035",
+    "title": "TODO: TaskExecutor Refactoring \u2705 FIXED",
+    "description": "Location: `src/meridian_core/orchestration/autonomous_orchestrator.py`\nLines: 1312\n\n**Status:** \u2705 **COMPLETED** (2025-11-16)\n\nSource: TODO_REVIEW.md",
+    "status": "closed",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.012087",
+    "updated": "2025-11-21T10:58:29.406056",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: TODO_REVIEW.md\nType: todo | CLOSED: Already implemented per TODO review.",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/TODO_REVIEW.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-036",
+    "title": "TODO: Streaming Implementation",
+    "description": "Location: `src/meridian_core/benchmarks/connector_benchmark.py`\nLines: 152\n\n**Count:** 1 TODO\n\nSource: TODO_REVIEW.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.012725",
+    "updated": "2025-11-20T22:17:34.013039",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: TODO_REVIEW.md\nType: todo",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/TODO_REVIEW.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-037",
+    "title": "TODO: Meta-Review Issue Tracking",
+    "description": "Location: `src/meridian_core/orchestration/meta_review_db.py`\nLines: 166\n\n**Count:** 1 NOTE\n\nSource: TODO_REVIEW.md",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:17:34.013567",
+    "updated": "2025-11-20T22:17:34.013902",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: TODO_REVIEW.md\nType: todo",
+    "related_files": [
+      "/Users/simonerses/data-projects/meridian-core/docs/TODO_REVIEW.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-038",
+    "title": "Implement TradingLearningEngine extending LearningEngine",
+    "description": "Implement TradingLearningEngine for meridian-trading domain.\n\nPriority 1: Complete meridian-trading Self-Learning\n\nThis is the missing self-learning implementation for the trading domain. The structure exists but no actual implementation.\n\nActions:\n1. Implement `TradingLearningEngine` extending `LearningEngine` from meridian-core\n2. Create trading data access layer\n3. Implement trading pattern detection\n4. Create nightly analysis script\n5. Integrate with ProposalManager\n\nFiles to Create:\n- src/meridian_trading/learning/trading_learning_engine.py\n- src/meridian_trading/learning/trading_data.py\n- src/meridian_trading/learning/pattern_detector.py\n- src/meridian_trading/learning/trading_metrics.py\n- scripts/nightly_learning_analysis.py\n\nImpact: Trading domain can't learn from performance without this implementation.\nPriority: HIGH",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading",
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.743111",
+    "updated": "2025-11-21T10:58:29.406483",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: implementation | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-039",
+    "title": "Create trading data access layer",
+    "description": "Create trading data access layer for TradingLearningEngine.\n\nThis will access trading data from data/positions.db and provide it to the learning engine for analysis.\n\nPart of Priority 1: Complete meridian-trading Self-Learning\n\nFile: src/meridian_trading/learning/trading_data.py\n\nPriority: HIGH",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.745204",
+    "updated": "2025-11-21T10:58:29.406483",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: implementation | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-040",
+    "title": "Implement trading pattern detection",
+    "description": "Implement trading pattern detection for TradingLearningEngine.\n\nDetect patterns in trading performance such as:\n- TDOM patterns\n- Losing streaks\n- Strategy effectiveness\n- Market conditions\n\nPart of Priority 1: Complete meridian-trading Self-Learning\n\nFile: src/meridian_trading/learning/pattern_detector.py\n\nPriority: HIGH",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.746217",
+    "updated": "2025-11-21T10:58:29.406484",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: implementation | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-041",
+    "title": "Create nightly learning analysis script",
+    "description": "Create nightly analysis script for trading learning.\n\nScript that runs automated learning cycles to analyze recent trades and generate proposals.\n\nPart of Priority 1: Complete meridian-trading Self-Learning\n\nFile: scripts/nightly_learning_analysis.py\n\nPriority: HIGH",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.747083",
+    "updated": "2025-11-21T10:58:29.406484",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: automation | DEFERRED: Strategic pivot away from trading. Revisit Phase 3+ if priorities change.",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-042",
+    "title": "Verify meridian-research learning bridge integration",
+    "description": "Verify learning bridge fully integrates with meridian-core.\n\nPriority 2: Verify meridian-research Integration\n\nActions:\n1. Verify learning bridge fully integrates with meridian-core\n2. Ensure proposals flow to core's ProposalManager\n3. Verify feedback bridge integration\n4. Test learning cycles end-to-end\n\nFiles to Review:\n- src/meridian_research/learning/bridge.py\n- src/meridian_research/learning/session_store.py\n- Verify integration with meridian_core.learning.ProposalManager\n\nPriority: MEDIUM",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-research",
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.747839",
+    "updated": "2025-11-20T22:19:17.748199",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: verification",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-043",
+    "title": "Consolidate Proposal vs LearningProposal database schemas",
+    "description": "Consolidate or document distinction between Proposal and LearningProposal schemas.\n\nCritical Issue: Database Schema Duplication\n\nThe meridian-core database has both:\n- Proposal table (used by ProposalManager)\n- LearningProposal table (different schema)\n\nQuestion: Why two proposal tables? Should they be merged?\n\nAction: Consolidate schemas or document distinction clearly\n\nPriority: MEDIUM",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.748483",
+    "updated": "2025-11-21T10:58:29.406614",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: refactoring | CLOSED: Consolidated into WS-TASK-005 (Database Consolidation).",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-044",
+    "title": "Document database usage and standardize naming",
+    "description": "Document database usage clearly and standardize naming.\n\nPriority 3: Database Consolidation\n\nActions:\n1. Document database usage clearly\n2. Consolidate proposal schemas (or document why two exist)\n3. Standardize database naming\n4. Ensure all databases use WAL mode\n5. Create database migration guide\n\nCurrent issues:\n- Multiple databases (proposals.db, decisions.db, meridian.db)\n- Some tables in main meridian.db, others in separate DBs\n- Inconsistent - should standardize\n\nPriority: MEDIUM",
+    "status": "closed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core",
+      "meridian-research",
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.749575",
+    "updated": "2025-11-21T10:58:29.406614",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: documentation | CLOSED: Consolidated into WS-TASK-005 (Database Consolidation).",
+    "related_files": [
+      "ARCHITECTURE-REVIEW-2025-11-20.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-045",
+    "title": "Migrate task_queue/registry to SQLite for concurrency",
+    "description": "Migrate task_queue/registry to SQLite to fix concurrency/file I/O issues.\n\nCritical (Blockers - Address Immediately)\n\nFiles: orchestrator.py, autonomous_orchestrator.py\nEffort: 2 days\n\nCurrent issue: File-based state management poses scalability and concurrency risks.\nSolution: Move to SQLite with proper connection pooling and WAL mode.\n\nPriority: CRITICAL",
+    "status": "approved",
+    "priority": "CRITICAL",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.750188",
+    "updated": "2025-11-20T22:19:17.750512",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: refactoring",
+    "related_files": [
+      "review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-046",
+    "title": "Add comprehensive tests with >80% coverage",
+    "description": "Add comprehensive tests focusing on integration flows.\n\nCritical (Blockers - Address Immediately)\n\nNew: tests/ directory\nEffort: 3-5 days\n\nFocus on integration flows. Current test coverage is insufficient for production readiness.\n\nPriority: CRITICAL",
+    "status": "closed",
+    "priority": "CRITICAL",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.750759",
+    "updated": "2025-11-21T10:58:29.406615",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: testing | CLOSED: Duplicate of WS-TASK-027.",
+    "related_files": [
+      "review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-047",
+    "title": "Refactor AutonomousOrchestrator to reduce god-class complexity",
+    "description": "Split AutonomousOrchestrator into composable classes.\n\nHigh (Significant Impact - Address Next Sprint)\n\nFile: autonomous_orchestrator.py\nEffort: 1-2 days\n\nThe class has grown into a 'God Object', tightly coupling many subsystems. Refactor to improve testability and maintainability.\n\nPriority: HIGH",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.751326",
+    "updated": "2025-11-20T22:19:17.751649",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: refactoring",
+    "related_files": [
+      "review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-048",
+    "title": "Enhance pattern detection with statistical thresholds",
+    "description": "Add statistical thresholds and correlations in learning.\n\nHigh (Significant Impact - Address Next Sprint)\n\nFile: orchestration_learning_engine.py\nEffort: 1 day\n\nCurrent pattern detection uses simple thresholds (e.g., failure_rate >=0.5). Enhance with more heuristics and correlations.\n\nPriority: HIGH",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.751892",
+    "updated": "2025-11-20T22:19:17.752212",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: enhancement",
+    "related_files": [
+      "review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-049",
+    "title": "Improve error propagation with custom exceptions",
+    "description": "Implement custom exceptions and logging everywhere.\n\nHigh (Significant Impact - Address Next Sprint)\n\nFiles: All\nEffort: 1 day\n\nNo more swallowed errors. Improve error handling and propagation throughout the codebase.\n\nPriority: HIGH",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.752461",
+    "updated": "2025-11-20T22:19:17.752781",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: improvement",
+    "related_files": [
+      "review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-050",
+    "title": "Security hardening: path validation, prompt escaping, DB encryption",
+    "description": "Implement security hardening measures.\n\nHigh (Significant Impact - Address Next Sprint)\n\nFiles: autonomous_orchestrator.py, meta_review.py\nEffort: 1 day\n\nSecurity improvements:\n- Path validation\n- Prompt escaping\n- DB encryption\n\nPriority: HIGH",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.753038",
+    "updated": "2025-11-20T22:19:17.753360",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: review_architecture_20251116_094525.md\nType: security",
+    "related_files": [
+      "review_architecture_20251116_094525.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-051",
+    "title": "Create GOVERNANCE-CONTEXT.md for auto-injection into AI prompts",
+    "description": "Create governance context file that gets automatically included in AI context.\n\nRecommendation 2: Governance Enforcement Mechanisms\n\nThis file should contain:\n- Critical rules (ADR-001, import rules, etc.)\n- Current context (session info, active issues)\n- Governance checklist\n\nFile: GOVERNANCE-CONTEXT.md\n\nThis ensures governance docs are \"active\" not \"passive\".\n\nPriority: HIGH",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core",
+      "workspace-root"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.753602",
+    "updated": "2025-11-20T22:19:17.753925",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance",
+    "related_files": [
+      "2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-052",
+    "title": "Create pre-task governance checklist enforcement",
+    "description": "Implement mandatory pre-task checklist for AI agents.\n\nRecommendation 3: Governance Enforcement Mechanisms\n\nEvery AI agent should check before starting work:\n- Read ADR-001-COMPONENT-PLACEMENT.md\n- Read AI-GUIDELINES.md (relevant sections)\n- Check WORKSPACE-TASKS.json for context\n- Check CROSS-REPO-ISSUES.json for known issues\n- Verify component placement\n- Check for similar work in other repos\n- Document decision rationale\n\nPriority: HIGH",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core",
+      "workspace-root"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.754227",
+    "updated": "2025-11-20T22:19:17.755010",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md\nType: governance",
+    "related_files": [
+      "2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-053",
+    "title": "Implement code-to-architecture component tracking system",
+    "description": "Implement system to track all code/files back to architecture components.\n\nFrom: 2025-11-20-CODE-TO-ARCHITECTURE-TRACKING.md\n\nThis system will:\n1. Map files/modules to architecture components\n2. Track git commits against components\n3. Validate before deployment\n4. Block deployment if files aren't traceable\n\nThis prevents scope creep by ensuring all code maps to agreed architecture.\n\nPriority: CRITICAL",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-core",
+      "workspace-root"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.755632",
+    "updated": "2025-11-21T10:58:29.406695",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-CODE-TO-ARCHITECTURE-TRACKING.md\nType: implementation | DEFERRED: Over-engineered for current scale. Revisit when team > 5 (Phase 3+).",
+    "related_files": [
+      "2025-11-20-CODE-TO-ARCHITECTURE-TRACKING.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-054",
+    "title": "Create master architecture repository structure",
+    "description": "Create master architecture repository at workspace level.\n\nFrom: 2025-11-20-CONFIGURATION-DRIFT-TRACKING-SYSTEM.md\n\nStructure:\n- architecture/master/ - Master specs per repo\n- architecture/roadmaps/ - Future state\n- architecture/diagrams/ - Architecture diagrams\n- architecture/decisions/ - ADRs\n- architecture/rules/ - Automated rules\n\nThis provides single source of truth for architecture.\n\nPriority: HIGH",
+    "status": "deferred",
+    "priority": "LOW",
+    "repos_affected": [
+      "meridian-core",
+      "workspace-root"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:19:17.756401",
+    "updated": "2025-11-21T10:58:29.406695",
+    "session_created": "2025-11-20-architecture-review-import",
+    "assigned_to": null,
+    "notes": "Imported from architecture review: 2025-11-20-CONFIGURATION-DRIFT-TRACKING-SYSTEM.md\nType: organization | DEFERRED: Over-engineered for current scale. Revisit when team > 5 (Phase 3+).",
+    "related_files": [
+      "2025-11-20-CONFIGURATION-DRIFT-TRACKING-SYSTEM.md"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-055",
+    "title": "Weekly workspace and repository housekeeping",
+    "description": "Weekly maintenance and cleanup tasks. Run: python workspace/scripts/housekeeping.py",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-20T22:33:57.172899",
+    "updated": "2025-11-20T22:33:57.175496",
+    "session_created": null,
+    "assigned_to": null,
+    "notes": "Recurring weekly task",
+    "related_files": [
+      "workspace/scripts/housekeeping.py"
+    ],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-056",
+    "title": "Architect WMS backup process",
+    "description": "Design an off-workspace backup architecture for workspace.db and governance JSON state. Requirements: target storage outside data-projects, encryption in transit/at rest, retention policies, automated schedule, restore testing.",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T08:06:58.622321",
+    "updated": "2025-11-21T08:06:58.624942",
+    "session_created": null,
+    "assigned_to": null,
+    "notes": null,
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-057",
+    "title": "Enable WMS CLI dependencies",
+    "description": "Resolve PEP 668 restrictions blocking `python workspace/wms/cli.py` so the CLI can run. Define the supported approach (venv, pipx, or packaging) and document how to install `click`/deps.",
+    "status": "completed",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T08:10:58.666345",
+    "updated": "2025-11-21T09:42:15.690312",
+    "session_created": null,
+    "assigned_to": null,
+    "notes": null,
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-058",
+    "title": "Implement Secret Management for API Keys",
+    "description": "Replace .env files with proper secret management solution. Choose per deployment (AWS Secrets Manager, HashiCorp Vault, Azure Key Vault, python-keyring). Migrate Anthropic/OpenAI/Google/XAI keys, update docs, add rotation policy, update connectors.",
+    "status": "completed",
+    "priority": "CRITICAL",
+    "repos_affected": [
+      "meridian-core",
+      "meridian-research",
+      "meridian-trading"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T10:34:45.292316",
+    "updated": "2025-11-21T10:45:08.095416",
+    "session_created": "2025-11-21-strategic-alignment",
+    "assigned_to": null,
+    "notes": "Strategic Plan Phase 2.5 Week 1 CRITICAL priority. Effort 2-3h. Blocks deployment.",
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-059",
+    "title": "Implement Rate Limiting for AI API Calls",
+    "description": "Add per-provider rate limiting (Anthropic 100/h, OpenAI 200/h, Google 150/h, Grok 100/h), exponential backoff, cost tracking & alerting, metrics hooks.",
+    "status": "completed",
+    "priority": "HIGH",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T10:34:45.292319",
+    "updated": "2025-11-21T10:52:58.000643",
+    "session_created": "2025-11-21-strategic-alignment",
+    "assigned_to": null,
+    "notes": "Strategic Plan Phase 2.5 Week 1 HIGH priority. Effort 2-3h. Cost control.",
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-060",
+    "title": "Add pgvector Extension for Semantic Search",
+    "description": "Enable semantic similarity search via PostgreSQL + pgvector. Create embedding tables (reports, knowledge, feedback), implement VectorSearchService, integrate sentence-transformers (all-MiniLM-L6-v2), migrate from SQLite to Postgres, document API.",
+    "status": "in_progress",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-research"
+    ],
+    "dependencies": [
+      "WS-TASK-005"
+    ],
+    "created": "2025-11-21T10:34:45.292320",
+    "updated": "2025-11-21T10:36:21.378867",
+    "session_created": "2025-11-21-strategic-alignment",
+    "assigned_to": null,
+    "notes": "Strategic Plan Phase 2.5 Week 3. Depends on WS-TASK-005 completion. Effort 4-6h.",
+    "related_files": [],
+    "metadata": {}
+  },
+  {
+    "id": "WS-TASK-061",
+    "title": "Implement Session File Encryption",
+    "description": "Encrypt research session files at rest using cryptography (Fernet). Implement EncryptedSessionStore, manage keys via secret manager (WS-TASK-058), add rotation, update session_store pipeline and docs.",
+    "status": "in_progress",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-research"
+    ],
+    "dependencies": [
+      "WS-TASK-058"
+    ],
+    "created": "2025-11-21T10:34:45.292321",
+    "updated": "2025-11-21T10:36:25.847039",
+    "session_created": "2025-11-21-strategic-alignment",
+    "assigned_to": null,
+    "notes": "Strategic Plan Phase 2.5 Week 1. Depends on WS-TASK-058. Effort 1-2h.",
+    "related_files": [],
+    "metadata": {}
+  }
+]

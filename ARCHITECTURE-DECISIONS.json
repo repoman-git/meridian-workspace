@@ -1,0 +1,89 @@
+{
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "date": "2025-11-20T21:07:47.854667",
+      "session": "2025-11-20-session-001",
+      "decision": "Consolidate credentials to meridian-suite keyring service",
+      "repos_affected": [
+        "meridian-core",
+        "meridian-research",
+        "meridian-trading"
+      ],
+      "rationale": "Single source of truth for credentials. All repos now use meridian_core.utils.credential_store with meridian-suite keyring service.",
+      "status": "implemented",
+      "impact": "HIGH",
+      "related_files": [
+        "meridian-core/src/meridian_core/utils/credential_store.py",
+        "meridian-core/scripts/migrate_credentials.py",
+        "meridian-core/scripts/migrate_existing_credentials.py",
+        "meridian-trading/src/meridian_trading/config/credentials.py",
+        "meridian-research/src/meridian_research/utils/credential_store.py"
+      ],
+      "documentation": [
+        "2025-11-20-CREDENTIAL-MANAGEMENT-ARCHITECTURE.md"
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "DEC-002",
+      "date": "2025-11-20T21:07:47.855418",
+      "session": "2025-11-20-session-001",
+      "decision": "Create workspace-level task tracking system",
+      "repos_affected": [
+        "workspace-root"
+      ],
+      "rationale": "Multiple TASK-QUEUE.json files across repos cause fragmentation. Unified tracking prevents silos and maintains session continuity.",
+      "status": "in_progress",
+      "impact": "HIGH",
+      "related_files": [
+        "WORKSPACE-TASKS.json",
+        "SESSION-LOG.json",
+        "CROSS-REPO-ISSUES.json",
+        "ARCHITECTURE-DECISIONS.json"
+      ],
+      "documentation": [
+        "2025-11-20-PROJECT-GOVERNANCE-AND-TASK-TRACKING-RECOMMENDATIONS.md"
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "DEC-003",
+      "date": "2025-11-20T21:07:47.855724",
+      "session": "2025-11-20-session-001",
+      "decision": "Architecture documentation standard: Date-prefixed markdown files",
+      "repos_affected": [
+        "all"
+      ],
+      "rationale": "Date prefixes (2025-11-20-) make it easy to see when architecture docs were created. Helps track evolution over time.",
+      "status": "implemented",
+      "impact": "MEDIUM",
+      "related_files": [
+        "2025-11-20-MERIDIAN-CORE-ARCHITECTURE.md",
+        "2025-11-20-MERIDIAN-RESEARCH-ARCHITECTURE.md",
+        "2025-11-20-MERIDIAN-TRADING-ARCHITECTURE.md"
+      ],
+      "documentation": [],
+      "metadata": {}
+    },
+    {
+      "id": "DEC-004",
+      "date": "2025-11-20T21:07:47.855998",
+      "session": "2025-11-20-session-001",
+      "decision": "Separate repos for core framework and domain adapters",
+      "repos_affected": [
+        "meridian-core",
+        "meridian-research",
+        "meridian-trading"
+      ],
+      "rationale": "Maintain separate repos to allow core to be published (PyPI) while domain adapters stay private. Clear separation via ADR-001.",
+      "status": "maintained",
+      "impact": "HIGH",
+      "related_files": [],
+      "documentation": [
+        "ADR-001-COMPONENT-PLACEMENT.md"
+      ],
+      "metadata": {}
+    }
+  ]
+}

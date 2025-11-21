@@ -1,0 +1,86 @@
+{
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "issue_type": "task_tracking",
+      "severity": "MEDIUM",
+      "title": "Task tracking fragmented across multiple repos",
+      "description": "Multiple TASK-QUEUE.json files found: meridian-core/task-queue.json, meridian-trading/TASK-QUEUE.json, meridian/BACKLOG.json. Causes task duplication and loss of context.",
+      "repos_affected": [
+        "meridian-core",
+        "meridian-research",
+        "meridian-trading"
+      ],
+      "detected": "2025-11-20T21:07:47.852875",
+      "detected_by": "manual-review",
+      "status": "open",
+      "action_required": "Create unified workspace-level task tracking (WORKSPACE-TASKS.json)",
+      "assigned_to": null,
+      "related_task_id": "WS-TASK-001",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_notes": null,
+      "metadata": {}
+    },
+    {
+      "id": "ISSUE-002",
+      "issue_type": "governance",
+      "severity": "HIGH",
+      "title": "Code creep happening despite governance docs",
+      "description": "AI-GUIDELINES.md and AI-HOUSE-MODEL.md exist but are not consistently followed. Code still appears in wrong repos (domain code in core, etc.).",
+      "repos_affected": [
+        "all"
+      ],
+      "detected": "2025-11-20T21:07:47.853524",
+      "detected_by": "user-observation",
+      "status": "open",
+      "action_required": "Enhance governance enforcement: mandatory pre-task checklist, governance injection, code creep detection scripts",
+      "assigned_to": null,
+      "related_task_id": "WS-TASK-001",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_notes": null,
+      "metadata": {}
+    },
+    {
+      "id": "ISSUE-003",
+      "issue_type": "session_handoff",
+      "severity": "MEDIUM",
+      "title": "Session handoff gaps - previous work not visible",
+      "description": "Work done in previous sessions not clearly documented for next session. AI agents start 'fresh' without context of previous decisions.",
+      "repos_affected": [
+        "all"
+      ],
+      "detected": "2025-11-20T21:07:47.853837",
+      "detected_by": "user-observation",
+      "status": "open",
+      "action_required": "Implement session handoff protocols: SESSION-LOG.json, ARCHITECTURE-DECISIONS.json, mandatory session start checklist",
+      "assigned_to": null,
+      "related_task_id": "WS-TASK-001",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_notes": null,
+      "metadata": {}
+    },
+    {
+      "id": "ISSUE-004",
+      "issue_type": "missing_component",
+      "severity": "HIGH",
+      "title": "TradingLearningEngine not implemented",
+      "description": "meridian-trading has learning bridge placeholder but TradingLearningEngine is not implemented. Self-learning for trading domain missing.",
+      "repos_affected": [
+        "meridian-trading"
+      ],
+      "detected": "2025-11-20T21:07:47.854137",
+      "detected_by": "architecture-review",
+      "status": "open",
+      "action_required": "Implement TradingLearningEngine in meridian-trading/learning/",
+      "assigned_to": null,
+      "related_task_id": "WS-TASK-002",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_notes": null,
+      "metadata": {}
+    }
+  ]
+}

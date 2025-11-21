@@ -1,0 +1,7 @@
+# Workspace Database Requirements
+# 
+# Management plane database dependencies
+# Uses SQLAlchemy + SQLite following meridian-core patterns
+
+sqlalchemy>=2.0.0
+
