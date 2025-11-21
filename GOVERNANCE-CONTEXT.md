@@ -1,7 +1,7 @@
 # GOVERNANCE-CONTEXT.md
 # Auto-generated for AI context injection
-# Generated: 2025-11-21 08:42:38
-# Session: 2025-11-21-084235
+# Generated: 2025-11-21 23:22:45
+# Session: 2025-11-21-232245
 
 ⚠️ **THIS FILE IS AUTO-INJECTED INTO EVERY AI INTERACTION**
 ⚠️ **AI AGENTS MUST FOLLOW THESE RULES WITHOUT EXCEPTION**
@@ -35,11 +35,10 @@
 ## CURRENT WORK CONTEXT
 
 **Active Repository:** `meridian-core`
-**Context ID:** `ctx-20251120-221029`
-**Activated:** 2025-11-20 22:10:29
-**Notes:** Testing WMS context
+**Context ID:** `ctx-20251121-222245`
+**Activated:** 2025-11-21 22:22:45
 
-**Session ID:** `2025-11-21-084235`
+**Session ID:** `2025-11-21-232245`
 **Workspace Root:** `/Users/simonerses/data-projects`
 
 ---
@@ -74,11 +73,7 @@
 ## ACTIVE WORKSPACE STATE
 
 ### Recent Tasks (from WORKSPACE-TASKS.json)
-- **WS-TASK-001:** Implement unified workspace task tracking system (completed)
-- **WS-TASK-004:** Implement management plane database (SQLAlchemy + SQLite) (completed)
-- **WS-TASK-002:** Implement TradingLearningEngine in meridian-trading (pending)
-- **WS-TASK-003:** Consolidate task tracking across repos (pending)
-- **WS-TASK-005:** Review and integrate WMS Implementation Specification (pending)
+- No active tasks found
 
 ### Recent Cross-Repo Issues (from CROSS-REPO-ISSUES.json)
 - **ISSUE-001:** Task tracking fragmented across multiple repos (MEDIUM)
@@ -87,10 +82,11 @@
 - **ISSUE-004:** TradingLearningEngine not implemented (HIGH)
 
 ### Recent Architecture Decisions (from ARCHITECTURE-DECISIONS.json)
-- **Consolidate credentials to meridian-suite keyring service** (2025-11-20)
-- **Create workspace-level task tracking system** (2025-11-20)
-- **Architecture documentation standard: Date-prefixed markdown files** (2025-11-20)
-- **Separate repos for core framework and domain adapters** (2025-11-20)
+- **Stay local for deployment (Phase 1) - Do not migrate to cloud yet** (2025-11-21T22:58:00.000000)
+- **Consolidate databases - merge workspace.db, proposals.db, orchestration_decisions.db** (2025-11-21T22:58:00.000000)
+- **Implement real LLM-based intent analysis for The Bastard (un-mock)** (2025-11-21T22:58:00.000000)
+- **Complete self-learning implementation for meridian-trading** (2025-11-21T22:58:00.000000)
+- **Implement fast path for research engine - skip consensus for high confidence (>95%)** (2025-11-21T22:58:00.000000)
 
 ---
 

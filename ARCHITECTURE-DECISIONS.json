@@ -84,6 +84,139 @@
         "ADR-001-COMPONENT-PLACEMENT.md"
       ],
       "metadata": {}
+    },
+    {
+      "id": "DEC-005",
+      "date": "2025-11-21T22:58:00.000000",
+      "session": "20251121_225855",
+      "decision": "Stay local for deployment (Phase 1) - Do not migrate to cloud yet",
+      "repos_affected": [
+        "meridian-core",
+        "meridian-research",
+        "meridian-trading",
+        "workspace"
+      ],
+      "rationale": "Moving a single-user research tool to the cloud introduces massive DevOps overhead for zero functional gain. Current architecture relies on local filesystem persistence (SQLite, JSON files). Cloud migration would require stateless architecture redesign. Exception: meridian-trading may need 24/7 availability later (Phase 2: headless Mac Mini).",
+      "status": "implemented",
+      "impact": "HIGH",
+      "related_files": [
+        "workspace.db",
+        "meridian.db",
+        "proposals.db",
+        "orchestration_decisions.db"
+      ],
+      "documentation": [
+        "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md",
+        "BASTARD-V2-SUMMARY.md"
+      ],
+      "metadata": {
+        "reviewer": "Gemini",
+        "review_date": "2025-11-21",
+        "health_score": "A-",
+        "recommended_phases": ["Phase 1: Local", "Phase 2: Headless Mac Mini", "Phase 3: Cloud (when scale > 5 users)"]
+      }
+    },
+    {
+      "id": "DEC-006",
+      "date": "2025-11-21T22:58:00.000000",
+      "session": "20251121_225855",
+      "decision": "Consolidate databases - merge workspace.db, proposals.db, orchestration_decisions.db",
+      "repos_affected": [
+        "workspace",
+        "meridian-core"
+      ],
+      "rationale": "Managing 5+ SQLite files (workspace.db, meridian.db, proposals.db, orchestration_decisions.db, positions.db) creates 'Database Hell' - becomes a nightmare for joins/analytics. Consolidate into single SQLite for local development. Only split if deploying to microservices architecture.",
+      "status": "planned",
+      "impact": "HIGH",
+      "related_files": [
+        "workspace/workspace.db",
+        "meridian-core/logs/proposals.db",
+        "meridian-core/logs/orchestration_decisions.db",
+        "workspace/db/workspace_db.py"
+      ],
+      "documentation": [
+        "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+      ],
+      "metadata": {
+        "reviewer": "Gemini",
+        "priority": "high",
+        "risk": "Database fragmentation and complexity"
+      }
+    },
+    {
+      "id": "DEC-007",
+      "date": "2025-11-21T22:58:00.000000",
+      "session": "20251121_225855",
+      "decision": "Implement real LLM-based intent analysis for The Bastard (un-mock)",
+      "repos_affected": [
+        "workspace"
+      ],
+      "rationale": "Current implementation uses naive keyword matching (e.g., 'kubernetes'), which will flag false positives (e.g., comments saying 'We are NOT using kubernetes'). The Bastard is the governance layer - it must use LLM to analyze intent, not just string matching. Wire to cheap/fast LLM (gpt-4o-mini or gemini-flash).",
+      "status": "planned",
+      "impact": "HIGH",
+      "related_files": [
+        "workspace/wms/bastard_integration.py",
+        "workspace/architecture/bastard/BASTARD-V2-SUMMARY.md"
+      ],
+      "documentation": [
+        "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+      ],
+      "metadata": {
+        "reviewer": "Gemini",
+        "priority": "high",
+        "current_implementation": "keyword matching",
+        "recommended_llm": ["gpt-4o-mini", "gemini-flash"]
+      }
+    },
+    {
+      "id": "DEC-008",
+      "date": "2025-11-21T22:58:00.000000",
+      "session": "20251121_225855",
+      "decision": "Complete self-learning implementation for meridian-trading",
+      "repos_affected": [
+        "meridian-trading"
+      ],
+      "rationale": "The biggest functional gap identified. The bridge exists (TradingLearningEngine extends LearningEngine) but the engine implementation is missing. This is the highest priority functional gap.",
+      "status": "planned",
+      "impact": "HIGH",
+      "related_files": [
+        "meridian-trading/src/meridian_trading/learning/trading_learning_engine.py"
+      ],
+      "documentation": [
+        "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md",
+        "ARCHITECTURE-REVIEW-2025-11-20.md"
+      ],
+      "metadata": {
+        "reviewer": "Gemini",
+        "priority": "high",
+        "gap_type": "functional",
+        "bridge_exists": true,
+        "implementation_status": "missing"
+      }
+    },
+    {
+      "id": "DEC-009",
+      "date": "2025-11-21T22:58:00.000000",
+      "session": "20251121_225855",
+      "decision": "Implement fast path for research engine - skip consensus for high confidence (>95%)",
+      "repos_affected": [
+        "meridian-research"
+      ],
+      "rationale": "Multi-AI consensus (querying 4 models, voting, synthesizing) is slow and expensive. If the first model (e.g., Claude) has confidence > 95%, skip the consensus step to save time and money.",
+      "status": "planned",
+      "impact": "MEDIUM",
+      "related_files": [
+        "meridian-research/src/meridian_research/research_engine.py"
+      ],
+      "documentation": [
+        "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+      ],
+      "metadata": {
+        "reviewer": "Gemini",
+        "priority": "medium",
+        "optimization_type": "performance",
+        "confidence_threshold": 0.95
+      }
     }
   ]
 }

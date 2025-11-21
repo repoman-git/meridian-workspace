@@ -1224,5 +1224,114 @@
     "notes": "Strategic Plan Phase 2.5 Week 1. Depends on WS-TASK-058. Effort 1-2h.",
     "related_files": [],
     "metadata": {}
+  },
+  {
+    "id": "WS-TASK-062",
+    "title": "Consolidate databases - merge workspace.db, proposals.db, orchestration_decisions.db",
+    "description": "Merge multiple SQLite databases (workspace.db, proposals.db, orchestration_decisions.db) into single database for local development. Managing 5+ SQLite files creates 'Database Hell' - becomes nightmare for joins/analytics. Consolidate into single SQLite for local development. Only split if deploying to microservices architecture. Related to DEC-006.",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "workspace",
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T22:58:00.000000",
+    "updated": "2025-11-21T22:58:00.000000",
+    "session_created": "20251121_225855",
+    "assigned_to": null,
+    "notes": "From Gemini Architecture Review (2025-11-21). High priority action item. Risk: Database fragmentation and complexity. Current: 5+ SQLite files (workspace.db, meridian.db, proposals.db, orchestration_decisions.db, positions.db).",
+    "related_files": [
+      "workspace/workspace.db",
+      "meridian-core/logs/proposals.db",
+      "meridian-core/logs/orchestration_decisions.db",
+      "workspace/db/workspace_db.py",
+      "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+    ],
+    "metadata": {
+      "reviewer": "Gemini",
+      "review_date": "2025-11-21",
+      "decision_id": "DEC-006"
+    }
+  },
+  {
+    "id": "WS-TASK-063",
+    "title": "Implement real LLM-based intent analysis for The Bastard (un-mock)",
+    "description": "Replace naive keyword matching in The Bastard with real LLM-based intent analysis. Current implementation uses string matching (e.g., 'kubernetes'), which will flag false positives (e.g., comments saying 'We are NOT using kubernetes'). Wire to cheap/fast LLM (gpt-4o-mini or gemini-flash) to analyze intent, not just string matching. Related to DEC-007.",
+    "status": "approved",
+    "priority": "HIGH",
+    "repos_affected": [
+      "workspace"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T22:58:00.000000",
+    "updated": "2025-11-21T22:58:00.000000",
+    "session_created": "20251121_225855",
+    "assigned_to": null,
+    "notes": "From Gemini Architecture Review (2025-11-21). High priority action item. The Bastard is the governance layer - must use LLM to analyze intent, not just string matching. Current: keyword matching. Recommended LLMs: gpt-4o-mini or gemini-flash.",
+    "related_files": [
+      "workspace/wms/bastard_integration.py",
+      "workspace/architecture/bastard/BASTARD-V2-SUMMARY.md",
+      "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+    ],
+    "metadata": {
+      "reviewer": "Gemini",
+      "review_date": "2025-11-21",
+      "decision_id": "DEC-007",
+      "current_implementation": "keyword matching",
+      "recommended_llm": ["gpt-4o-mini", "gemini-flash"]
+    }
+  },
+  {
+    "id": "WS-TASK-064",
+    "title": "Implement fast path for research engine - skip consensus for high confidence (>95%)",
+    "description": "Add fast path optimization to ResearchEngine: if first model (e.g., Claude) has confidence > 95%, skip the multi-AI consensus step (querying 4 models, voting, synthesizing) to save time and money. Multi-AI consensus is slow and expensive. Fast path optimization for high-confidence responses. Related to DEC-009.",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-research"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T22:58:00.000000",
+    "updated": "2025-11-21T22:58:00.000000",
+    "session_created": "20251121_225855",
+    "assigned_to": null,
+    "notes": "From Gemini Architecture Review (2025-11-21). Medium priority optimization. Performance optimization to reduce latency and costs. Confidence threshold: >95%. Type: performance optimization.",
+    "related_files": [
+      "meridian-research/src/meridian_research/research_engine.py",
+      "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+    ],
+    "metadata": {
+      "reviewer": "Gemini",
+      "review_date": "2025-11-21",
+      "decision_id": "DEC-009",
+      "optimization_type": "performance",
+      "confidence_threshold": 0.95
+    }
+  },
+  {
+    "id": "WS-TASK-065",
+    "title": "Add pre-commit hook for automated doc sync",
+    "description": "Ensure sync_workspace_docs.py runs on a pre-commit hook to prevent documentation drift. If docs drift, AI agents become useless. Risk: Doc Rot - outdated docs cause AI agent hallucinations. Related to medium priority recommendation from Gemini review.",
+    "status": "approved",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "workspace"
+    ],
+    "dependencies": [],
+    "created": "2025-11-21T22:58:00.000000",
+    "updated": "2025-11-21T22:58:00.000000",
+    "session_created": "20251121_225855",
+    "assigned_to": null,
+    "notes": "From Gemini Architecture Review (2025-11-21). Medium priority action item. Prevents documentation drift that causes AI agent hallucinations. Risk: Doc Rot.",
+    "related_files": [
+      "workspace/scripts/sync_workspace_docs.py",
+      "2025-11-21-ARCHITECTURE-REVIEW-GEMINI.md"
+    ],
+    "metadata": {
+      "reviewer": "Gemini",
+      "review_date": "2025-11-21",
+      "risk": "Doc Rot"
+    }
   }
 ]

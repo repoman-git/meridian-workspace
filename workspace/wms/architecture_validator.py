@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import json
 import re
+import time
 
 from workspace.db.models import (
     ArchitectureComponent,
@@ -65,7 +66,6 @@ class ArchitectureValidator:
                 existing = self.db.query(UnregisteredFile).filter_by(id=unregistered_id).first()
                 if existing:
                     # Use a different ID with more entropy
-                    import time
                     unregistered_id = f"unreg-{timestamp_str}-{file_hash:05d}-{int(time.time() * 1000000) % 100000}"
                 
                 # Add to unregistered files
