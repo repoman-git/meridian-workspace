@@ -56,9 +56,21 @@ class ArchitectureValidator:
             ).first()
             
             if not unregistered:
+                # Generate unique ID using file_path hash (more unique than timestamp)
+                file_hash = abs(hash(file_path)) % 100000
+                timestamp_str = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+                unregistered_id = f"unreg-{timestamp_str}-{file_hash:05d}"
+                
+                # Check if ID already exists (unlikely but possible)
+                existing = self.db.query(UnregisteredFile).filter_by(id=unregistered_id).first()
+                if existing:
+                    # Use a different ID with more entropy
+                    import time
+                    unregistered_id = f"unreg-{timestamp_str}-{file_hash:05d}-{int(time.time() * 1000000) % 100000}"
+                
                 # Add to unregistered files
                 unregistered = UnregisteredFile(
-                    id=f"unreg-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}-{hash(file_path) % 10000}",
+                    id=unregistered_id,
                     file_path=file_path,
                     repo=repo,
                     status="unregistered",
@@ -67,6 +79,11 @@ class ArchitectureValidator:
                     detection_count=1
                 )
                 self.db.add(unregistered)
+                self.db.commit()
+            else:
+                # Update existing unregistered file
+                unregistered.last_seen = datetime.utcnow()
+                unregistered.detection_count += 1
                 self.db.commit()
             
             violations.append(f"File '{file_path}' is not mapped to any architecture component")
