@@ -1279,7 +1279,10 @@
       "review_date": "2025-11-21",
       "decision_id": "DEC-007",
       "current_implementation": "keyword matching",
-      "recommended_llm": ["gpt-4o-mini", "gemini-flash"]
+      "recommended_llm": [
+        "gpt-4o-mini",
+        "gemini-flash"
+      ]
     }
   },
   {
@@ -1332,6 +1335,38 @@
       "reviewer": "Gemini",
       "review_date": "2025-11-21",
       "risk": "Doc Rot"
+    }
+  },
+  {
+    "id": "WS-TASK-066",
+    "title": "Enable SQLite task queue by default in orchestrator",
+    "description": "After validation period, make SQLite the default backend for task queue. Requires 2-3 days of testing first.",
+    "status": "pending",
+    "priority": "MEDIUM",
+    "repos_affected": [
+      "meridian-core"
+    ],
+    "dependencies": [],
+    "created": "2025-11-22T11:03:24.130845",
+    "updated": "2025-11-22T11:03:24.130849",
+    "session_created": null,
+    "assigned_to": null,
+    "notes": "Migration complete. Need validation period before enabling by default. See 2025-11-22-Cursor-SQLITE-MIGRATION-STATUS.md",
+    "related_files": [
+      "meridian-core/src/meridian_core/orchestration/orchestrator.py",
+      "meridian-core/src/meridian_core/orchestration/task_queue_db.py",
+      "2025-11-22-Cursor-SQLITE-MIGRATION-STATUS.md"
+    ],
+    "metadata": {
+      "validation_checklist": [
+        "Run orchestrator with SQLite in test mode",
+        "Test edge cases in task retrieval/updates",
+        "Verify fallback to JSON works seamlessly",
+        "Test concurrent access patterns",
+        "Monitor for 2-3 days in production",
+        "Document rollback procedure",
+        "Performance benchmarking"
+      ]
     }
   }
 ]

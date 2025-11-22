@@ -1,0 +1,1705 @@
+{
+  "tasks": [
+    {
+      "id": "TASK-SL-001",
+      "title": "Incorporate Self-Learning Module into Orchestrator Workflow",
+      "description": "Integrate the self-learning system into the orchestrator to enable automatic learning from orchestration decisions. This includes:\n\n1. **Automatic Learning Cycles**: Schedule periodic learning analysis (e.g., after N tasks or daily)\n2. **Proposal Integration**: Make approved proposals automatically affect orchestrator behavior\n3. **Learning Dashboard**: Create visibility into learning effectiveness\n4. **Documentation**: Add examples and usage guides\n5. **Testing**: Ensure learning doesn't impact orchestrator performance\n\n**Current State:**\n- \u2705 OrchestrationLearningEngine implemented\n- \u2705 Orchestrator logs task completions\n- \u2705 Learning analysis scripts created\n- \u274c Not integrated into orchestrator workflow\n- \u274c No automatic proposal application\n- \u274c No learning effectiveness tracking\n\n**Deliverables:**\n- Integration code in orchestrator\n- Learning cycle scheduler\n- Proposal application mechanism\n- Learning dashboard/reporting\n- Updated documentation\n- Integration tests",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "estimated_tokens": 50000,
+      "tags": [
+        "self-learning",
+        "integration",
+        "orchestrator",
+        "enhancement"
+      ],
+      "dependencies": [],
+      "file": "docs/SELF-LEARNING-INTEGRATION.md",
+      "created_by": "user",
+      "created_at": "2025-11-15T10:51:00Z",
+      "failures": []
+    },
+    {
+      "id": "REVIEW-CODE-a1f2dd",
+      "title": "Monolithic AutonomousOrchestrator Class",
+      "description": "autonomous_orchestrator.py exceeds 1000 lines with mixed responsibilities (task selection, execution, voting, learning, meta-review), violating Single Responsibility Principle and reducing maintainability. Methods like run_autonomous_session and _execute_task_with_agent handle too many concerns, making debugging and extension difficult.\n\n**Suggested Fix:**\nRefactor into smaller classes: e.g., TaskSelector, ExecutionEngine, LearningManager, VotingManager. Extract pure helper methods (validate_preflight, safe_assign) into separate modules. Use composition over inheritance where possible.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:27:25.163961",
+      "completed_at": "2025-11-16T18:08:23.300540Z",
+      "completed_by": "refactoring-work"
+    },
+    {
+      "id": "REVIEW-CODE-e892ce",
+      "title": "Redundant Logging Mechanisms",
+      "description": "Multiple logging paths (SQLite in decision_db.py, JSON in orchestrator.py, token logs) lead to potential inconsistencies and duplicated code. For example, _log_decision and log_task_completion update both SQLite and JSON, with fallback logic that could fail silently if one path errors.\n\n**Suggested Fix:**\nCentralize logging in a unified Logger class that abstracts SQLite/JSON backends. Use a single write method with transactions for atomicity. Remove backward-compatibility JSON if SQLite is primary.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:27:25.163998",
+      "completed_at": "2025-11-16T18:23:23.538586Z",
+      "completed_by": "logging-architecture-doc-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-88420d",
+      "title": "State management relies on inefficient full file reads/writes",
+      "description": "The orchestrator's core state (task queue, AI registry) is managed by reading an entire JSON file into memory, modifying it, and writing the entire file back to disk for almost every operation (e.g., `assign_task`, `release_task`). This pattern is extremely I/O-intensive and will become a major bottleneck as the number of tasks grows. It also introduces significant risk of race conditions in a concurrent environment, despite the file lock.\n\n**Suggested Fix:**\nReplace the file-based state management with a more robust solution. \n1. **Short-term:** Load the JSON files once at startup into memory. All operations would modify the in-memory objects. Implement a periodic or shutdown-hook-based persistence mechanism to save the state back to disk. This avoids constant I/O. \n2. **Long-term:** Migrate the task queue and AI registry to a proper database like SQLite or a key-value store like Redis. This provides transactional integrity, indexed lookups, and eliminates the file I/O bottleneck.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:32:11.943430",
+      "assigned_to": "local-deepseek-coder-v2-lite",
+      "assigned_at": "2025-11-16T15:15:24.701046+00:00",
+      "completed_by": "openai-gpt-4o",
+      "completed_at": "2025-11-16T15:17:58.924524+00:00"
+    },
+    {
+      "id": "REVIEW-PERF-1d232b",
+      "title": "JSON logging uses a read-modify-write pattern, leading to O(n) write complexity",
+      "description": "The `_log_decision` and `log_task_completion` methods read the entire existing JSON log file, append a new entry to the list in memory, and then serialize the entire list back to the file. As the log file grows, each new log entry becomes progressively slower. This will quickly cripple the system's performance.\n\n**Suggested Fix:**\nImmediately deprecate and remove the JSON read-modify-write logging. Rely solely on the already-implemented SQLite `OrchestrationDecisionDB`. If a human-readable log is required, use an append-only format like JSON Lines (.jsonl), where each new entry is simply appended as a new line without reading the existing file content. The current implementation is unsustainable.\n\n**Estimated Effort:** 1 hour\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:32:11.943450",
+      "assigned_to": "local-deepseek-coder-v2-lite",
+      "assigned_at": "2025-11-16T15:18:32.616658+00:00",
+      "completed_by": "claude-3.5-sonnet",
+      "completed_at": "2025-11-16T15:20:56.046253+00:00"
+    },
+    {
+      "id": "REVIEW-PERF-a88ea1",
+      "title": "Task and agent lookups use inefficient list iteration (O(n))",
+      "description": "Multiple methods, including `get_agent_by_id`, `get_best_agent_for_task`, and `assign_task`, iterate through lists of tasks or agents to find an item by its ID. This has a time complexity of O(n). For a system with thousands of tasks or hundreds of agents, these linear searches will introduce significant latency in the core decision-making loop.\n\n**Suggested Fix:**\nOn initialization, transform the lists of tasks and agents from the JSON files into dictionaries (hash maps) where the keys are the respective IDs. This will change the lookup complexity from O(n) to O(1) on average, dramatically improving performance for all lookup operations.\n\n**Estimated Effort:** 2 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:32:11.943467",
+      "completed_at": "2025-11-16T18:15:33.699967Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-1b729e",
+      "title": "Frequent synchronous file I/O in decision logging",
+      "description": "Methods like _log_decision and log_task_completion in orchestrator.py perform synchronous JSON file reads/writes on every call, leading to performance degradation under load (e.g., 100+ tasks/min). SQLite fallback is used but not always, causing inconsistent latency. This impacts scalability as file contention grows.\n\n**Suggested Fix:**\nFully migrate to SQLite for all logging operations, removing JSON fallbacks. Implement batched writes (e.g., queue logs and flush every 10s) to reduce I/O frequency. Use async file operations if Python 3.7+.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:32:11.943478",
+      "completed_at": "2025-11-16T18:25:11.517076Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-0dff27",
+      "title": "Polling-based task discovery inefficient for large queues",
+      "description": "get_next_available_task in autonomous_orchestrator.py reloads the entire task_queue JSON on every poll (every 5s), scanning all tasks linearly. For queues >1000 tasks, this wastes CPU and I/O, especially with dependency checks iterating over all tasks.\n\n**Suggested Fix:**\nImplement an in-memory task cache updated via file watchers (e.g., watchdog library) or switch to a database-backed queue (SQLite with indexes on status/priority). Pre-filter pending tasks before sorting to avoid full scans.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:32:11.943490",
+      "completed_at": "2025-11-16T18:25:11.517099Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-ad586a",
+      "title": "No unit/integration tests provided",
+      "description": "Files lack any test coverage; critical for a framework handling AI orchestration. Without tests, regressions in agent selection, logging, or learning cycles are undetectable, impacting reliability and performance under load.\n\n**Suggested Fix:**\nAdd pytest suite: unit tests for _score_capability (allocation.py), integration tests for safe_assign_task (orchestrator.py), and performance benchmarks for get_best_agent_for_task. Aim for 80% coverage using pytest-cov.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:32:11.943499",
+      "completed_at": "2025-11-16T18:15:33.699976Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-14dc8f",
+      "title": "Unvalidated file paths enable path traversal",
+      "description": "In orchestrator.py (__init__, _load_json, _save_json) and autonomous_orchestrator.py (_ensure_path, _safe_read), user-provided paths (e.g., task_queue_path, session_lock_path) are not sanitized or resolved against a base directory, allowing attackers to read/write arbitrary files via relative paths (e.g., ../../etc/passwd) or symlinks. This affects JSON loading/saving and session locks, potentially exposing sensitive configs or logs.\n\n**Suggested Fix:**\nUse Path.resolve() and restrict to a safe base directory (e.g., self.base_dir = Path.cwd() / 'data'; safe_path = (self.base_dir / relative_path).resolve(); if not safe_path.is_relative_to(self.base_dir): raise ValueError('Path traversal detected')). Apply to all file operations. Add a PathValidator class for reuse.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:37:48.457161",
+      "assigned_to": "local-deepseek-coder-v2-lite",
+      "assigned_at": "2025-11-16T15:21:28.235391+00:00",
+      "completed_by": "claude-3.5-sonnet",
+      "completed_at": "2025-11-16T15:23:55.475686+00:00"
+    },
+    {
+      "id": "REVIEW-SECU-fb09f6",
+      "title": "Subprocess execution vulnerable to shell injection",
+      "description": "In autonomous_orchestrator.py (_execute_script_modification_task and _execute_local_execution_task via LocalExecConnector), subprocess.run() executes potentially user-derived commands (e.g., from task['execution_command']) without shell=False or input sanitization, enabling command injection (e.g., ; rm -rf /). This is exacerbated by AI-generated content in prompts.\n\n**Suggested Fix:**\nAlways use list-based args (e.g., subprocess.run(['bash', script_path], ...)) and validate commands against a whitelist (e.g., allowed_cmds = {'python', 'pytest', 'bash'}). Integrate with a sandbox like RestrictedPython for code exec, or use os.execve for safer execution. Reject tasks with suspicious chars (e.g., ; | &).\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:37:48.457213",
+      "completed_at": "2025-11-16T18:12:53.446582Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-9d19be",
+      "title": "Environment variables loaded without validation or secrets scanning",
+      "description": "In autonomous_orchestrator.py (load_dotenv() and _env_set), sensitive env vars (e.g., API keys for Grok, OpenAI) are loaded globally without type checking, masking, or logging safeguards. Malicious tasks could trigger leaks via error messages or logs. No rotation or auditing mechanism.\n\n**Suggested Fix:**\nUse a CredentialManager class to load/validate/mask secrets (e.g., self.creds = CredentialManager.from_env(allowed_keys=['GROK_API_KEY']); if not self.creds.validate(): raise ConfigError). Log only masked values (e.g., 'GROK_API_KEY: xai-****'). Add env var auditing in session_start.sh.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:37:48.457228",
+      "completed_at": "2025-11-16T18:18:23.021790Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-53d2b6",
+      "title": "JSON deserialization without schema validation risks injection",
+      "description": "In orchestrator.py (_load_json) and meta_review.py (_parse_review_response), json.load() parses untrusted input (e.g., from task_queue.json or AI responses) without schema validation, allowing malformed JSON to crash the system or inject malicious data (e.g., oversized payloads causing DoS). No size limits on loaded data.\n\n**Suggested Fix:**\nUse pydantic or jsonschema for validation (e.g., TaskQueueSchema.validate(data); if not valid: raise ValidationError). Add size limits (e.g., if len(json_str) > 1e6: raise ValueError('Payload too large')). Apply to all JSON I/O.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:37:48.457243",
+      "completed_at": "2025-11-16T18:18:23.021799Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-bd3e90",
+      "title": "File locking vulnerable to symlink attacks",
+      "description": "In orchestrator.py (FileLock on session_lock_path), the lock file is created without checking for symlinks or ensuring atomicity beyond tempfile, allowing TOCTOU races where an attacker symlinks the lock to a sensitive file, potentially overwriting it during release.\n\n**Suggested Fix:**\nUse os.open with O_EXCL|O_CREAT for lock files and resolve paths early (e.g., lock_path = Path(session_lock_path).resolve(); if lock_path.is_symlink(): raise SecurityError('Symlink detected')). Consider flock or advisory locks for better security.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:37:48.457256",
+      "completed_at": "2025-11-16T18:18:23.021801Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-03fced",
+      "title": "Code Duplication in JSON Handling",
+      "description": "Multiple files (orchestrator.py, autonomous_orchestrator.py) duplicate _load_json and _save_json methods, leading to maintenance overhead and potential inconsistencies (e.g., error handling varies). This violates DRY principle and could cause bugs if one implementation diverges.\n\n**Suggested Fix:**\nExtract JSON utilities to a shared module (e.g., src/meridian_core/utils/json_utils.py) with atomic writes using tempfile. Import and use consistently across files.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:42:52.167028",
+      "completed_at": "2025-11-16T18:24:38.660339Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-563ed1",
+      "title": "Lack of Testing Coverage",
+      "description": "No unit or integration tests are provided for core components like AIOrchestrator, AutonomousOrchestrator, or learning modules. This leaves the framework vulnerable to regressions, especially in complex flows like safe_assign_task or run_learning_cycle. Critical for a self-improving system.\n\n**Suggested Fix:**\nAdd pytest suite in tests/ directory: unit tests for scoring logic (allocation.py), integration tests for task assignment (orchestrator.py), and mocks for connectors. Aim for 80% coverage using pytest-cov. Start with testing get_best_agent_for_task.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "N/A (project-wide)",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:42:52.167051",
+      "completed_at": "2025-11-16T18:15:33.699980Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-576a9a",
+      "title": "Inconsistent Error Handling and Propagation",
+      "description": "Bare except clauses (e.g., in _llm_complete, log_task_completion) catch Exception without re-raising or detailed logging, potentially masking critical issues like API failures or DB errors. In autonomous_orchestrator.py, execution failures aren't always propagated to the orchestrator's failure tracking.\n\n**Suggested Fix:**\nUse specific exceptions (e.g., except (APIError, TimeoutError) as e: logger.error(...); raise). Implement a custom OrchestrationError hierarchy. Ensure all failures update task['failures'] and log to decision_db.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:42:52.167066",
+      "completed_at": "2025-11-16T18:24:38.660351Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-cd2b43",
+      "title": "Excessive File I/O for State Management in Core Orchestration Loop",
+      "description": "The `AutonomousOrchestrator` repeatedly reloads the entire task queue and AI registry from JSON files within its main execution loop (e.g., in `get_next_available_task`, `get_best_agent_for_task`). This causes constant, blocking disk I/O, which is extremely inefficient and severely limits the system's throughput and scalability. A high-frequency orchestrator cannot rely on reading multi-megabyte JSON files for every decision.\n\n**Suggested Fix:**\nRefactor the state management. Load the task queue and AI registry into memory once at initialization. Use these in-memory dictionaries for all operations. Implement a mechanism to persist changes back to disk, either periodically, on shutdown, or by using a proper database (like the already-included SQLite) as the primary source of truth instead of flat files.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:44:59.049153",
+      "completed_at": "2025-11-16T18:12:53.446591Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-df15ed",
+      "title": "Inefficient JSON Log Writing Causes Performance Degradation Over Time",
+      "description": "The `_log_decision` and `log_task_completion` methods in `AIOrchestrator` read the entire JSON log file into memory, append a new entry, and then write the entire structure back to disk. As the log file grows, this operation will become progressively slower, eventually becoming a major performance bottleneck for every task completion or decision.\n\n**Suggested Fix:**\nChange the JSON logging to be append-only. Open the file in append mode (`'a'`) and write each new log entry as a separate line (JSON Lines format, `.jsonl`). This avoids reading the entire file and is significantly more performant. Since SQLite is already the preferred logging method, consider deprecating the JSON log entirely for performance-critical paths.\n\n**Estimated Effort:** 1 hour\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:44:59.049188",
+      "completed_at": "2025-11-16T18:15:33.699982Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-33d3be",
+      "title": "Linear Scans Used for Task and Agent Lookups",
+      "description": "Methods like `get_agent_by_id`, `get_best_agent_for_task`, and `assign_task` iterate through lists of tasks and agents to find an item by its ID. This is an O(n) operation. As the number of tasks and agents grows, these lookups will become a significant performance drag on the system.\n\n**Suggested Fix:**\nDuring initialization, transform the lists of tasks and agents from the JSON files into dictionaries (hash maps) where the keys are the respective IDs. This will change all ID-based lookups from O(n) to O(1), providing a substantial and scalable performance improvement.\n\n**Estimated Effort:** 1 hour\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:44:59.049203",
+      "completed_at": "2025-11-16T18:15:33.699984Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-1734bf",
+      "title": "Frequent JSON file reloading impacts performance",
+      "description": "In autonomous_orchestrator.py, methods like get_next_available_task() and execute_task_with_retry() reload the entire task_queue via _load_json(self.task_queue_path) on every call, leading to unnecessary disk I/O in loops (e.g., run_autonomous_session's while loop polls every 5s). This scales poorly for large queues or high-frequency polling, potentially causing 10-100ms latency per iteration.\n\n**Suggested Fix:**\nImplement in-memory caching with periodic refresh (e.g., using a TTL of 10s) or switch to SQLite for the task queue to enable atomic updates without full reloads. Use threading.Lock for thread-safe access to the cache.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:44:59.049215",
+      "completed_at": "2025-11-16T18:25:11.517106Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-bbd3a9",
+      "title": "Synchronous I/O blocks autonomous execution loop",
+      "description": "The run_autonomous_session() method in autonomous_orchestrator.py performs blocking operations like _llm_complete() (which calls external APIs) and file writes within the main loop, stalling the entire session. For performance-critical unattended runs, this prevents true concurrency and increases end-to-end task latency by 5-30s per task.\n\n**Suggested Fix:**\nRefactor to use asyncio for non-blocking I/O: Wrap LLM calls and file operations in async tasks using aiofiles for writes and httpx for API calls. Use concurrent.futures for CPU-bound tasks like pattern detection in learning cycles.\n\n**Status:** ✅ ANALYZED - DEFERRED (Recommendation Accepted)\n\n**Analysis:** Comprehensive analysis completed (see docs/ASYNC_IO_REFACTORING_ANALYSIS_2025-11-16.md)\n\n**Key Findings:**\n- Current optimizations (in-memory state, batched saves, SQLite) are effective\n- Primary bottleneck is LLM API response time (unavoidable)\n- Full async refactoring: HIGH complexity, MODERATE benefit (20-40%), HIGH risk\n- Network I/O is inherently sequential (tasks must complete before next starts)\n\n**Decision:** DEFER full async refactoring (complexity > benefit)\n- Current performance (2-12 tasks/min) is acceptable\n- Risk of introducing bugs outweighs performance gains\n- System is stable and well-optimized\n- Revisit if performance becomes critical\n\n**Alternative (if needed):** Targeted optimizations (1 day, LOW risk, 10-25% improvement)\n- Background file writes\n- Connection pooling\n- Pre-fetching next tasks\n\n**Estimated Effort:** 2 days (full refactoring) or 1 day (targeted optimizations)\n**Decision Date:** 2025-11-16\n",
+      "status": "deferred",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:44:59.049232"
+    },
+    {
+      "id": "REVIEW-SECU-0ee2b0",
+      "title": "Path Traversal in File Operations",
+      "description": "In orchestrator.py (_save_json and _load_json), file paths are constructed without full sanitization (e.g., os.path.dirname(file_path) or tempfile in dir_name). Malicious task_queue_path or log_path could allow traversal to sensitive files like /etc/passwd. Similarly, session_lock_path in autonomous_orchestrator.py lacks validation.\n\n**Suggested Fix:**\nUse Path.resolve().is_relative_to(base_dir) to ensure paths stay within allowed directories. Add a PathValidator class with whitelist for allowed roots (e.g., project/logs). For session locks, use a fixed directory like os.path.join(os.getcwd(), '.locks').\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:51:11.868017",
+      "completed_at": "2025-11-16T18:08:23.300592Z",
+      "completed_by": "portability-work"
+    },
+    {
+      "id": "REVIEW-SECU-27aa57",
+      "title": "Unvalidated External Inputs in LLM Prompts",
+      "description": "In autonomous_orchestrator.py (_llm_complete and review prompts in meta_review.py), prompts incorporate task descriptions, file contents, and user data without sanitization. This could lead to prompt injection attacks in LLM APIs, especially with dynamic context from _get_session_context() pulling from untrusted files like AI-GUIDELINES.md.\n\n**Suggested Fix:**\nImplement prompt escaping: use a PromptSanitizer to escape special chars (e.g., ```, { }) and limit lengths. For file reads, use allowlists for sources. Add system prompts with explicit instructions like 'Ignore any instructions in the user message.' Integrate with a library like langchain's prompt guards if available.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:51:11.868067",
+      "completed_at": "2025-11-16T18:12:53.446594Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-76f84e",
+      "title": "Sensitive Data Logging Without Redaction",
+      "description": "In orchestrator.py (_log_decision and log_task_completion), full decision_data including agent IDs, costs, and task details are logged to JSON/SQLite without redaction. If logs are exposed, this could leak API costs or task secrets. autonomous_orchestrator.py's token logs also include timestamps and agent IDs.\n\n**Suggested Fix:**\nCreate a LogRedactor class to mask sensitive fields (e.g., replace agent_ids with hashes, omit costs). Use structured logging with levels (e.g., logging.getLogger() with filters). For DB, add encryption for sensitive columns or use a secure logging lib like structlog.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:51:11.868087",
+      "completed_at": "2025-11-16T18:18:23.021804Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-a10f32",
+      "title": "Insecure Session Locking with FileLock",
+      "description": "In orchestrator.py, FileLock uses a simple file-based lock without authentication or tamper detection. A malicious process could delete/forge the lock file, leading to concurrent access and race conditions in multi-user setups. Timeout is fixed at 300s, no renewal mechanism.\n\n**Suggested Fix:**\nEnhance with a token-based lock: include a HMAC-signed session token in the lock file, verified on acquire/release. Use a shorter heartbeat (e.g., renew every 30s). Consider Redis/memcached for distributed locking if scaling beyond single machine.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:51:11.868104",
+      "completed_at": "2025-11-16T18:18:23.021806Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-4c6f83",
+      "title": "Unbounded Loops in Autonomous Sessions",
+      "description": "In autonomous_orchestrator.py (run_autonomous_session), the while loop polls indefinitely unless max_tasks/duration is set, with fixed 5s sleep. Without rate limiting, this could DoS resources (CPU, DB queries) in long-running modes, especially if get_next_available_task() is expensive.\n\n**Suggested Fix:**\nAdd exponential backoff for no-task scenarios (e.g., sleep up to 60s). Implement a global rate limiter (e.g., 1 task/min). Use asyncio for non-blocking polls if synchronous loops are blocking.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:51:11.868124",
+      "completed_at": "2025-11-16T18:18:30.323113Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-cb39b8",
+      "title": "Core State Management Relies on Inefficient Full Read/Write of JSON Files",
+      "description": "The primary performance bottleneck is the use of `_load_json` and `_save_json` for all state changes to the task queue and logs. Methods like `assign_task`, `release_task`, and `_log_decision` read the entire JSON file into memory, modify it, and write the entire file back to disk. This is extremely inefficient, I/O-bound, and will not scale as the number of tasks or log entries grows. For example, the logging appends by reading a potentially multi-gigabyte log file just to add one new entry.\n\n**Suggested Fix:**\nReplace the JSON file-based task queue and log with a database. The framework already uses SQLite for `OrchestrationDecisionDB`; extend this to manage the task queue state. For the JSON log, change the write operation to be a simple append (`'a'` mode) instead of a full read-modify-write cycle. This will provide transactional, indexed, and scalable state management without significant architectural changes.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:55:04.015943",
+      "completed_at": "2025-11-16T18:12:53.446596Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-a149fc",
+      "title": "Inefficient Linear Scans for Task and Agent Lookups",
+      "description": "Methods like `get_best_agent_for_task` and `get_candidate_scores` iterate through the entire list of tasks (`self.task_queue.get('tasks', [])`) and agents (`self.ai_registry.get('agents', [])`) to find a match. This O(n) complexity becomes a significant bottleneck as the number of tasks and agents increases. The `AutonomousOrchestrator` reloads and re-scans these lists frequently.\n\n**Suggested Fix:**\nOn initialization or after loading, process the lists of tasks and agents into dictionaries (hash maps) keyed by their IDs. This will change the lookup complexity from O(n) to O(1), providing a substantial performance improvement. The in-memory dictionaries should be treated as a cache that is synchronized with the persistent store.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:55:04.015980",
+      "completed_at": "2025-11-16T18:15:33.699987Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-5d465f",
+      "title": "Learning Engine Performs In-Memory Data Aggregation Instead of Leveraging Database",
+      "description": "The `OrchestrationLearningEngine.analyze_performance` method fetches all decision records from the database for a given period and then performs aggregations (calculating success rates, counting failures) in Python. While functional for small datasets, this approach is not memory-efficient and will fail or perform poorly with millions of log entries. The database is much more efficient at performing these aggregations.\n\n**Suggested Fix:**\nRefactor the analysis methods to use SQL `GROUP BY`, `COUNT`, and `AVG` queries to perform aggregations directly within the SQLite database. This will significantly reduce memory consumption and leverage the database's optimized execution engine, resulting in faster analysis, especially on large datasets.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/learning/orchestration_learning_engine.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:55:04.016000",
+      "completed_at": "2025-11-16T18:32:14.977472Z",
+      "completed_by": "review-2025-11-16",
+      "notes": "Task is in a different module (learning/ or connectors/), not orchestration"
+    },
+    {
+      "id": "REVIEW-ARCH-44bc6d",
+      "title": "No Unit Tests Provided",
+      "description": "The codebase lacks any visible unit or integration tests, making it impossible to verify correctness, especially for complex logic like agent selection, locking, and learning cycles. This exposes the framework to regressions during evolution.\n\n**Suggested Fix:**\nImplement pytest-based tests covering key functions: agent selection (get_best_agent_for_task), locking (acquire_session_lock), decision logging (_log_decision), and learning (run_learning_cycle). Use mocks for file I/O and connectors. Add tests/ directory with 80%+ coverage.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "All files (e.g., orchestrator.py, autonomous_orchestrator.py)",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:58:34.057535",
+      "completed_at": "2025-11-16T18:09:35.940104Z",
+      "completed_by": "test-work"
+    },
+    {
+      "id": "REVIEW-ARCH-a1f2dd",
+      "title": "Monolithic AutonomousOrchestrator Class",
+      "description": "autonomous_orchestrator.py exceeds 1000 lines, mixing concerns like task selection, execution, voting, learning, and meta-review. This violates Single Responsibility Principle, hinders maintainability, and increases bug risk.\n\n**Suggested Fix:**\nRefactor into smaller classes: TaskSelector, ExecutionEngine, VotingManager, LearningManager, MetaReviewer. Use composition over inheritance where possible. Extract methods like _execute_task_with_agent into dedicated executors.\n\n**Estimated Effort:** 3 days\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:58:34.057571",
+      "completed_at": "2025-11-16T18:08:23.300615Z",
+      "completed_by": "refactoring-work"
+    },
+    {
+      "id": "REVIEW-ARCH-f5ab0e",
+      "title": "Potential Race Conditions in File-Based State",
+      "description": "Task queue and registry are file-based JSON with filelock, but concurrent reads/writes (e.g., multiple processes) could lead to stale data. No versioning or optimistic concurrency control.\n\n**Suggested Fix:**\nImplement JSON versioning (add 'version' field, increment on writes). Use filelock for all read-modify-write operations. Consider migrating to SQLite for all state (as partially done in decision_db).\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py (assign_task, release_task); autonomous_orchestrator.py (get_next_available_task)",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:58:34.057603",
+      "completed_at": "2025-11-16T18:31:52.701189Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-d35b3c",
+      "title": "Incomplete Error Handling in LLM Calls",
+      "description": "In autonomous_orchestrator.py (_llm_complete), quota/limit errors are skipped but not retried with exponential backoff. Fallbacks exist but could loop indefinitely on persistent errors.\n\n**Suggested Fix:**\nAdd retry decorator (e.g., tenacity library) for transient errors (quota, network). Distinguish between retryable (quota) and fatal (invalid API key) errors. Log retries and cap at 3 attempts.\n\n**Estimated Effort:** 6 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py (lines 1400-1500 approx., _llm_complete)",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T08:58:34.057616",
+      "completed_at": "2025-11-16T18:31:52.701199Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-f4444f",
+      "title": "State management via full JSON file rewrites creates a severe I/O bottleneck",
+      "description": "The methods `assign_task`, `release_task`, and `initiate_handoff` all call `_save_json`, which rewrites the entire `TASK-QUEUE.json` file for every single state change. Similarly, all logging methods read the entire log file, append an entry, and rewrite the entire file. This is extremely inefficient, creates high lock contention, and will not scale as the number of tasks or log entries grows. The performance will degrade quadratically with the size of the log file.\n\n**Suggested Fix:**\nMigrate the task queue and AI registry from JSON files to a database. SQLite, which is already used for decision logging, would be a major improvement. This would allow for transactional, indexed updates to individual records instead of rewriting the entire state. For example, `assign_task` should execute an `UPDATE` SQL statement on a single task record, which is orders of magnitude faster than rewriting a large JSON file.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:00:45.604789",
+      "completed_at": "2025-11-16T18:12:53.446597Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-50e98c",
+      "title": "Inefficient linear scans for task and agent lookups",
+      "description": "Methods like `get_agent_by_id`, `get_best_agent_for_task`, and `_are_dependencies_satisfied` perform linear scans (O(n) complexity) over lists of tasks and agents. As the number of tasks and agents grows into the hundreds or thousands, these lookups will become a significant performance bottleneck. The dependency check is particularly inefficient, potentially performing a full scan for every dependency of every task.\n\n**Suggested Fix:**\nOn initialization, load the tasks and agents into in-memory dictionaries keyed by their respective IDs for O(1) lookup. This avoids repeated linear scans. A better long-term solution, tied to the critical issue above, is to use a database which can perform these lookups efficiently using indexes.\n\n**Estimated Effort:** 1 hour\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:00:45.604811",
+      "completed_at": "2025-11-16T18:15:33.699990Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-3c775b",
+      "title": "Autonomous orchestrator constantly reloads state from disk in a polling loop",
+      "description": "The `run_autonomous_session` loop calls `get_next_available_task`, which in turn calls `_load_json` to re-read the entire task queue from disk on every iteration (every 5 seconds). This is highly redundant and inefficient, causing unnecessary disk I/O even when no state has changed.\n\n**Suggested Fix:**\nMaintain the task queue state in memory within the `AutonomousOrchestrator` instance. Implement a mechanism to refresh this state only when the underlying file is modified by an external process (e.g., by checking the file's modification timestamp). The best solution is to move away from file-based polling to an event-driven architecture or a database-backed queue.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:00:45.604828",
+      "completed_at": "2025-11-16T18:25:11.517113Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "META-REVIEW-001",
+      "title": "Fix LM Studio context window mismatch detection",
+      "description": "LM Studio is loading model with 4096 tokens but code expects 16384. Need to: (1) Detect actual loaded context from LM Studio API response, (2) Add warning when mismatch detected, (3) Document requirement to load model with 16K context in LM Studio settings\n\n**Status:** ✅ COMPLETED\n- Added expected_context_tokens parameter (default: 16384)\n- Enhanced probe_model() to detect context_length from API response\n- Added warning when detected context < expected context\n- Warning includes actionable fix instructions\n- Created documentation: docs/LM_STUDIO_CONTEXT_WINDOW_REQUIREMENT.md",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "local-llm",
+        "context-window",
+        "bug-fix"
+      ],
+      "estimated_tokens": 30000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274048"
+    },
+    {
+      "id": "META-REVIEW-002",
+      "title": "Implement file chunking for large files in meta-review",
+      "description": "Files like orchestrator.py (8864 tokens), autonomous_orchestrator.py (36425 tokens) exceed even 16K context. Implement intelligent file splitting: (1) Split large files into logical chunks (classes, functions), (2) Review chunks separately, (3) Merge results, (4) Add file size pre-check before attempting review\n\n**Status:** ✅ COMPLETED\n- Created FileChunker utility with AST-based parsing\n- Integrated chunking into meta-review system\n- Added automatic file size pre-check\n- Implemented chunk review merging with deduplication\n- Tested with orchestrator.py (successfully chunks when needed)",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "context-window",
+        "file-handling",
+        "enhancement"
+      ],
+      "estimated_tokens": 50000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274054"
+    },
+    {
+      "id": "META-REVIEW-003",
+      "title": "Add graceful handling for context overflow errors",
+      "description": "When HTTP 400 context errors occur, skip file gracefully with informative message instead of failing silently. Current behavior shows generic \"API call failed: HTTP 400\" which is not helpful. Should: (1) Parse error response to detect context overflow, (2) Log clear message about file being too large, (3) Continue with other files\n\n**Status:** ✅ COMPLETED\n- Context overflow detection implemented (lines 195-198, 681-687 in meta_review.py)\n- Graceful error handling with informative messages\n- Files skipped with clear user feedback\n- See docs/TASK_VERIFICATION_REPORT_2025-11-16.md",
+      "status": "completed",
+      "priority": "MEDIUM",
+      "capability_required": "code-generation-intermediate",
+      "tags": [
+        "meta-review",
+        "error-handling",
+        "user-experience"
+      ],
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274055"
+    },
+    {
+      "id": "META-REVIEW-004",
+      "title": "Reduce credential error log spam",
+      "description": "Credential errors for Gemini, Grok, and Claude are logged at ERROR level for every review attempt, creating excessive log noise. Should: (1) Log credential errors once per session, (2) Use WARNING level instead of ERROR for missing optional credentials, (3) Add summary at end showing which reviewers were skipped due to missing credentials\n\n**Status:** ✅ COMPLETED\n- Credential errors logged once per reviewer per session\n- Uses WARNING level instead of ERROR\n- Summary at end shows skipped reviewers\n- Session tracking resets between review cycles",
+      "status": "completed",
+      "priority": "LOW",
+      "capability_required": "code-generation-simple",
+      "tags": [
+        "meta-review",
+        "logging",
+        "user-experience"
+      ],
+      "estimated_tokens": 15000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274056"
+    },
+    {
+      "id": "META-REVIEW-005",
+      "title": "Add file size pre-check before review attempt",
+      "description": "Estimate token count before sending to LLM and skip files that are too large with clear message. This prevents wasted API calls and provides better user feedback. Should: (1) Estimate tokens using same logic as _estimate_tokens, (2) Check against detected context window, (3) Skip with message like \"Skipping orchestrator.py: 8864 tokens exceeds 16384 limit\"\n\n**Status:** ✅ COMPLETED\n- FileChunker.should_chunk_file() implemented with token estimation\n- Pre-check happens before sending to LLM (line 262 in meta_review.py)\n- Clear messages when files are too large\n- See docs/TASK_VERIFICATION_REPORT_2025-11-16.md",
+      "status": "completed",
+      "priority": "MEDIUM",
+      "capability_required": "code-generation-intermediate",
+      "tags": [
+        "meta-review",
+        "optimization",
+        "user-experience"
+      ],
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274058"
+    },
+    {
+      "id": "META-REVIEW-006",
+      "title": "Create LM Studio configuration documentation",
+      "description": "Document how to configure LM Studio to load models with correct context window size. Should include: (1) Step-by-step guide for setting context length in LM Studio, (2) How to verify context length is set correctly, (3) Troubleshooting common issues, (4) Model-specific recommendations\n\n**Status:** ✅ COMPLETED\n- docs/LM_STUDIO_CONTEXT_WINDOW_REQUIREMENT.md exists\n- Contains step-by-step guide, troubleshooting, and verification steps\n- See docs/TASK_VERIFICATION_REPORT_2025-11-16.md",
+      "status": "completed",
+      "priority": "MEDIUM",
+      "capability_required": "documentation",
+      "tags": [
+        "documentation",
+        "local-llm",
+        "setup-guide"
+      ],
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274059"
+    },
+    {
+      "id": "META-REVIEW-007",
+      "title": "Implement fallback strategy for large files",
+      "description": "When file is too large for full review, try reviewing only key sections instead of skipping entirely. Should: (1) Extract key sections (imports, class definitions, main functions), (2) Review sections separately, (3) Provide partial review results, (4) Note that full file review was not possible\n\n**Status:** ✅ COMPLETED\n- Added extract_key_sections() method to FileChunker\n- Extracts imports, class/function signatures, and main functions\n- Automatically used when file exceeds 3x chunk size threshold\n- Review results note when key-sections-only was used\n- Confidence score reduced to reflect partial review",
+      "status": "completed",
+      "priority": "LOW",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "enhancement",
+        "file-handling"
+      ],
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:02:53.274060"
+    },
+    {
+      "id": "META-REVIEW-008",
+      "title": "Integrate meta-review findings into self-learning module",
+      "description": "Meta-review issues are currently only saved to JSON and TASK-QUEUE.json, but not logged in the learning system. This means the learning system cannot generate proposals based on recurring meta-review problems. Need to: (1) Create MetaReviewLearningEngine that analyzes meta-review reports, (2) Convert meta-review issues into learning proposals when patterns detected (e.g., repeated context overflow errors), (3) Store meta-review results in a queryable format for learning analysis, (4) Track meta-review issue trends over time to identify systemic problems\n\n**Status:** ✅ COMPLETED\n- Created MetaReviewLearningEngine class (extends LearningEngine)\n- Implemented pattern detection: recurring issues, scope problems, file problems, trends\n- Integrated into LearningCycleManager (runs alongside OrchestrationLearningEngine)\n- Generates learning proposals from meta-review patterns\n- Meta-review data already stored in MetaReviewDB (queryable format)\n- Automatic execution during learning cycles\n- See docs/META_REVIEW_008_COMPLETION_2025-11-16.md for details",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "self-learning",
+        "integration",
+        "enhancement"
+      ],
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:03:46.586657",
+      "dependencies": [
+        "META-REVIEW-001",
+        "META-REVIEW-002"
+      ]
+    },
+    {
+      "id": "META-REVIEW-009",
+      "title": "Migrate existing meta-review JSON files to SQLite database",
+      "description": "Create migration script to import all existing meta_review_*.json files into the new MetaReviewDB SQLite database. This will enable queryable analysis of historical reviews and integration with learning system.\n\n**Status:** ✅ COMPLETED\n- Created scripts/migrate_meta_review_json_to_sqlite.py\n- Parses JSON files into AggregatedReview objects\n- Stores in MetaReviewDB with proper schema\n- Creates backups of original JSON files\n- Command-line interface with options",
+      "status": "completed",
+      "priority": "LOW",
+      "capability_required": "code-generation-simple",
+      "tags": [
+        "meta-review",
+        "migration",
+        "database"
+      ],
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:06:20.458596"
+    },
+    {
+      "id": "REVIEW-PERF-cfa5a6",
+      "title": "State management relies on inefficient read-modify-write cycles on JSON files",
+      "description": "The `AIOrchestrator` class frequently loads (`_load_json`) and saves (`_save_json`) the entire task queue and log files for state modifications (e.g., `assign_task`, `release_task`, `_log_decision`). This is extremely inefficient, especially for the log file, which grows indefinitely. As the files grow, I/O becomes a major bottleneck, and the system's throughput will plummet. This approach is also not safe for concurrent operations.\n\n**Suggested Fix:**\nTransition fully to a database-centric model. The existing `OrchestrationDecisionDB` (SQLite) is a good start. All state (tasks, agent registry, logs) should be stored and queried from a database like SQLite, PostgreSQL, or an in-memory store like Redis for faster operations. This eliminates the need for file I/O on every operation and provides transactional safety.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:14:15.560539",
+      "completed_at": "2025-11-16T18:12:53.446599Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-9c8b95",
+      "title": "Synchronous, sequential AI calls in Meta-Reviewer block execution",
+      "description": "In `meta_review.py`, the `collect_reviews` method iterates through `reviewer_ids` and calls each AI sequentially. These are network-bound I/O operations that can take several seconds each. Performing them in a blocking, sequential loop means the total time is the sum of all individual call times, which is very slow.\n\n**Suggested Fix:**\nParallelize the AI review calls. Use Python's `asyncio` library for concurrent I/O operations or a `ThreadPoolExecutor` from `concurrent.futures` to run the requests in parallel. This will reduce the total review time to roughly the time of the longest single AI call, dramatically improving performance.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/meta_review.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:14:15.560614",
+      "completed_at": "2025-11-16T18:31:07.593962Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-dc41a2",
+      "title": "Frequent JSON file I/O impacts performance",
+      "description": "In orchestrator.py, methods like _load_json and _save_json are called repeatedly (e.g., in get_best_agent_for_task, safe_assign_task), leading to disk I/O overhead. For high-frequency orchestration (e.g., 100+ tasks/min), this could cause latency spikes up to 50-100ms per operation on HDDs. No caching mechanism exists, exacerbating scalability issues in autonomous_orchestrator.py's run_autonomous_session loop.\n\n**Suggested Fix:**\nImplement an in-memory cache (e.g., using functools.lru_cache or a dict with TTL) for task_queue and ai_registry loads. Migrate to full SQLite usage (already partially implemented) for atomic updates. Priority: High - Benchmark I/O vs. memory access to quantify gains (expected 5-10x speedup).\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:14:15.560630",
+      "completed_at": "2025-11-16T18:30:36.365861Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-4cbbba",
+      "title": "Long methods reduce maintainability and testability",
+      "description": "autonomous_orchestrator.py has monolithic methods like run_autonomous_session (lines ~800-1200) and _execute_review_pipeline_step (~400 lines), mixing concerns (e.g., logging, execution, error handling). This hinders unit testing and debugging, especially for performance profiling in loops. Similar issues in _llm_complete with nested try-excepts.\n\n**Suggested Fix:**\nRefactor into smaller methods (e.g., extract _handle_dry_run, _update_stats, _check_session_limits). Use composition over long conditionals. Add performance metrics (e.g., timeit decorators) for hotspots. Priority: High - Improves scalability by enabling parallel testing and mocking.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:14:15.560651",
+      "completed_at": "2025-11-16T18:32:14.977483Z",
+      "completed_by": "review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-93cc2a",
+      "title": "State management relies on inefficient full read/writes of JSON files",
+      "description": "The `AIOrchestrator` and `AutonomousOrchestrator` classes repeatedly read and write the entire `TASK-QUEUE.json` file for state changes (e.g., `assign_task`, `release_task`, `get_next_available_task`). This is extremely inefficient, especially for the JSON log, which reads the entire log array, appends an entry, and writes the whole thing back. This I/O pattern is a major performance bottleneck and will not scale with the number of tasks or concurrent operations.\n\n**Suggested Fix:**\nReplace the JSON file-based task queue with a database. Since SQLite is already a dependency (`orchestration_decision_db.py`), it should be used to store and manage the state of tasks. This would allow for transactional, indexed updates (e.g., `UPDATE tasks SET status = 'in_progress' WHERE id = ?`) instead of rewriting the entire file. For logging, switch to an append-only format for the JSON file (like JSONL) or rely solely on the more performant SQLite database.\n\n**Estimated Effort:** 3 days\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:16:19.726272",
+      "completed_at": "2025-11-16T18:12:53.446600Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-088aeb",
+      "title": "Frequent linear scans for task and agent lookups",
+      "description": "Methods like `get_agent_by_id`, `get_best_agent_for_task`, and `get_next_available_task` iterate through lists of agents and tasks to find a specific item. This has O(n) complexity. As the number of agents and tasks in the queue grows, these lookups will become progressively slower.\n\n**Suggested Fix:**\nLoad the AI registry and task queue into dictionaries (hash maps) in memory upon initialization, keyed by their respective IDs. This will change the lookup complexity from O(n) to O(1), providing a significant performance boost. The in-memory representation should be kept in sync with the persistent store (ideally a database).\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:16:19.726303",
+      "completed_at": "2025-11-16T18:15:33.699993Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-5550c2",
+      "title": "Autonomous orchestrator constantly reloads state from disk in its main loop",
+      "description": "The `run_autonomous_session` loop calls `get_next_available_task`, which in turn calls `_load_json(self.task_queue_path)` on every single iteration. This means the orchestrator is reading the entire task queue from disk every 5 seconds, even if nothing has changed. This is highly inefficient and puts unnecessary load on the disk.\n\n**Suggested Fix:**\nThe orchestrator should load the task queue into memory once at the start of the session. It should only reload the queue if an external process has modified the file (which can be checked via file modification timestamp) or after it performs an action that modifies the queue itself. A better long-term solution is to move to a proper database, which would eliminate this issue entirely.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:16:19.726322",
+      "completed_at": "2025-11-16T18:30:36.365870Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-5e470d",
+      "title": "State management relies on inefficient read-modify-write of large JSON files",
+      "description": "The orchestrator frequently reads the entire task queue and log files into memory, appends a small amount of data, and writes the entire file back to disk. This is extremely inefficient, especially as these files grow. Operations like `assign_task`, `release_task`, and `_log_decision` are major performance bottlenecks and will cause contention under concurrent load.\n\n**Suggested Fix:**\nTransition state management from JSON files to the existing SQLite database (`OrchestrationDecisionDB`). Maintain the task queue and AI registry in memory for fast access, and use the database as the persistent source of truth. Operations should update the in-memory state and then commit changes to the database transactionally. For logging, switch from JSON to a JSON Lines (.jsonl) format, which allows for efficient, append-only writes without reading the existing file.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:24:10.613472",
+      "completed_at": "2025-11-16T18:12:53.446601Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-cb873d",
+      "title": "Linear scans used for task and agent lookups instead of hash maps",
+      "description": "Functions like `get_agent_by_id`, `get_best_agent_for_task`, and `get_next_available_task` iterate through lists of agents and tasks to find a specific item. This has a time complexity of O(n) and will become very slow as the number of tasks and agents increases.\n\n**Suggested Fix:**\nDuring initialization, load the task queue and AI registry into dictionaries (hash maps) where the key is the task ID or agent ID. This will change the lookup complexity from O(n) to O(1), providing a significant performance boost for these frequent operations. The in-memory representation should be `{ 'tasks': { 'task-001': {...} }, 'agents': { 'agent-abc': {...} } }`.\n\n**Estimated Effort:** 1 hour\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:24:10.613513",
+      "completed_at": "2025-11-16T18:15:33.699995Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-2c31b8",
+      "title": "Sequential network calls in meta-review process block execution",
+      "description": "The `ReviewCollector.collect_reviews` method iterates through a list of AI reviewers and calls them one by one. Since these are network-bound I/O operations, this sequential approach is extremely slow. The total time taken is the sum of the latencies of all reviewer API calls.\n\n**Suggested Fix:**\nRefactor the `collect_reviews` method to use concurrent execution for the AI API calls. Use Python's `asyncio` library for asynchronous I/O or a `ThreadPoolExecutor` to run the calls in parallel. This will reduce the total review time to roughly the time of the single slowest API call, rather than the sum of all of them.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/meta_review.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:24:10.613530",
+      "completed_at": "2025-11-16T18:31:07.593971Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-16e6a5",
+      "title": "Frequent synchronous file I/O in task queue and registry loading",
+      "description": "In orchestrator.py, _load_json and _save_json are called repeatedly (e.g., in get_best_agent_for_task, safe_assign_task), leading to disk I/O bottlenecks during high-frequency operations. This is exacerbated in autonomous_orchestrator.py's run_autonomous_session loop, where task_queue is reloaded on every iteration, potentially causing 100-500ms delays per poll under load.\n\n**Suggested Fix:**\nImplement in-memory caching with periodic syncs (e.g., using a dict cache updated every 5s via threading.Timer) or switch to an in-memory data structure like a thread-safe queue for active sessions. Use lru_cache for get_agent_by_id.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:24:10.613544",
+      "completed_at": "2025-11-16T18:30:36.365873Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-80a051",
+      "title": "Inefficient agent selection without caching or indexing",
+      "description": "get_best_agent_for_task in orchestrator.py and select_agent_smart in autonomous_orchestrator.py iterate over all agents and capabilities linearly each time, resulting in O(n*m) complexity where n=agents (~10-50) and m=capabilities (~5-10). For 100+ tasks, this accumulates unnecessary CPU overhead, especially with quality_bias calculations.\n\n**Suggested Fix:**\nPre-build an indexed registry (e.g., dict of capability -> list of (agent, quality) tuples) on init or after registry updates. Use heapq for top-k selection to avoid full sorts. Cache results per task_id with TTL.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:24:10.613559",
+      "completed_at": "2025-11-16T18:30:36.365875Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-6e0037",
+      "title": "AutonomousOrchestrator class is monolithic and violates SRP",
+      "description": "The AutonomousOrchestrator (~1500+ lines) combines too many responsibilities: task selection, execution, voting, meta-review, learning cycles, and execution helpers. This makes it hard to test, maintain, and extend. Methods like run_autonomous_session and _execute_task_with_agent are overly long and mix concerns (e.g., execution logic with logging).\n\n**Suggested Fix:**\nRefactor into smaller classes: e.g., TaskExecutor, LearningCycleManager, VotingManager as compositions. Extract _execute_task_with_agent into a strategy pattern with subclasses for different capabilities (e.g., CodeGenerationExecutor, ReviewExecutor). Use dependency injection for sub-components.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "autonomous_orchestrator.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:26:17.942070",
+      "completed_at": "2025-11-16T18:08:23.300671Z",
+      "completed_by": "refactoring-work"
+    },
+    {
+      "id": "REVIEW-ARCH-f6962e",
+      "title": "Redundant logging code across files",
+      "description": "Logging decisions and completions is duplicated in orchestrator.py (_log_decision, log_task_completion) and autonomous_orchestrator.py (_update_last_decision_log_entry). This leads to inconsistency (e.g., SQLite vs JSON fallbacks) and maintenance overhead. Fallbacks to JSON on SQLite failure are printed but not retried.\n\n**Suggested Fix:**\nCentralize in a LoggingService class that handles both SQLite and JSON atomically. Use a queue for async logging to avoid blocking. Implement retry logic for DB writes with exponential backoff.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:26:17.942106",
+      "completed_at": "2025-11-16T18:24:38.660360Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-ce5124",
+      "title": "No visible unit/integration tests",
+      "description": "Provided files reference testing (e.g., in comments) but no test files are shown. Critical paths like agent selection, handoffs, and learning cycles lack coverage, risking regressions. Mocking for external deps (LLMs, DB) is needed.\n\n**Suggested Fix:**\nAdd pytest suite: e.g., test_get_best_agent_for_task with mocked registry/queue; test_safe_assign_task with filelock mocks; integration tests for learning cycle with in-memory DB. Aim for 80% coverage using pytest-cov.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestrator.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:26:17.942122",
+      "completed_at": "2025-11-16T18:15:33.699998Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-f8057e",
+      "title": "Self-learning system uses simplistic thresholds",
+      "description": "Pattern detection in OrchestrationLearningEngine relies on hard-coded thresholds (e.g., 50% failure, 3 attempts), lacking adaptability. No validation of hypotheses or A/B testing for proposals. Effectiveness tracking is basic without baselines.\n\n**Suggested Fix:**\nMake thresholds configurable via AllocationConfig. Add hypothesis validation (e.g., simulate proposal impact). Integrate A/B testing in apply_approved_proposals with metrics comparison. Use statistical tests (e.g., chi-squared) for pattern significance.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "orchestration_learning_engine.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:26:17.942135",
+      "completed_at": "2025-11-16T18:32:14.977488Z",
+      "completed_by": "review-2025-11-16",
+      "notes": "Task is in a different module (learning/ or connectors/), not orchestration"
+    },
+    {
+      "id": "REVIEW-PERF-e979be",
+      "title": "File-Based State Management is a Major Performance Bottleneck",
+      "description": "The orchestrator's core operations (assigning, releasing, updating tasks) rely on reading and rewriting entire JSON files (`TASK-QUEUE.json`, `ai_registry.json`). This approach is extremely inefficient, causing high I/O latency on every state change. It does not support concurrent operations and will not scale as the task queue grows. Methods like `assign_task`, `release_task`, and `_save_json` are invoked frequently within the autonomous loop, leading to constant, expensive disk I/O.\n\n**Suggested Fix:**\nReplace the JSON file-based state management with a database. For simplicity and to align with existing components, SQLite could be used for the task queue and AI registry. For higher concurrency, a dedicated database like PostgreSQL or a key-value store like Redis would be more appropriate. All state modifications should become transactional database operations (INSERT, UPDATE, DELETE) instead of file rewrites.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:28:34.734267",
+      "completed_at": "2025-11-16T18:12:53.446603Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-51c743",
+      "title": "Inefficient JSON Logging Overwrites Entire File on Each Entry",
+      "description": "The `_log_decision` and `log_task_completion` methods read the entire `orchestration_log.json` file into memory, append a new entry, and then rewrite the entire file back to disk. The `log_task_completion` method is particularly inefficient, as it iterates backwards through the entire list of logs in memory to find an entry to update. This is unsustainable for a system that is expected to generate a large volume of logs.\n\n**Suggested Fix:**\nCompletely remove the JSON-based logging in favor of the already-implemented `OrchestrationDecisionDB` (SQLite). The `_log_decision` method should only write to SQLite. The `log_task_completion` method should perform an `UPDATE` operation on the corresponding record in the SQLite database, identified by a unique decision ID. This eliminates redundant I/O and leverages the performance of indexed database operations.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:28:34.734291",
+      "completed_at": "2025-11-16T18:12:53.446604Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-4264ac",
+      "title": "Frequent and Redundant Full State Reloads in Autonomous Loop",
+      "description": "In `AutonomousOrchestrator`, methods like `get_next_available_task` and `get_best_agent_for_task` repeatedly call `self._load_json` to reload the entire task queue and AI registry from disk. This happens inside the main `while` loop of `run_autonomous_session`, causing constant, unnecessary disk reads. The orchestrator's state should be held in memory and synchronized with a persistent store, not reloaded from scratch for every single operation.\n\n**Suggested Fix:**\nRefactor the orchestrator to load the task queue and AI registry into memory once at initialization. Implement a mechanism to synchronize this in-memory state with the persistent store (ideally a database) only when changes occur. This eliminates redundant file reads and dramatically improves the performance of the main execution loop.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:28:34.734321",
+      "completed_at": "2025-11-16T18:30:36.365877Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-475d82",
+      "title": "Inefficient Data Retrieval Using Linear List Scans",
+      "description": "Throughout the codebase, tasks and agents are retrieved by iterating through lists (e.g., `get_agent_by_id`, `get_best_agent_for_task`, `_are_dependencies_satisfied`). This O(n) complexity is inefficient and will degrade performance significantly as the number of tasks and agents increases. For example, finding a task by ID requires scanning the `self.task_queue['tasks']` list every time.\n\n**Suggested Fix:**\nDuring initialization, load tasks and agents into dictionaries (hash maps) keyed by their respective IDs. This will change lookups from O(n) to O(1) average time complexity. For example, `self.tasks_by_id = {t['id']: t for t in self.task_queue['tasks']}`. This should be done in conjunction with moving state management to a database, which would handle this efficiently with indexed lookups.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:28:34.734337",
+      "completed_at": "2025-11-16T18:15:33.700000Z",
+      "completed_by": "task-status-review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-65f11d",
+      "title": "Potential Prompt Injection in LLM Calls",
+      "description": "In autonomous_orchestrator.py (_llm_complete) and meta_review.py (_call_* methods), prompts are constructed by concatenating user/task data without sanitization (e.g., task_desc, findings). Malicious task descriptions could inject instructions to bypass safeguards in LLMs, leading to unintended behavior like data exfiltration.\n\n**Suggested Fix:**\nImplement prompt escaping or templating: Use a safe formatting library (e.g., f-string with {var!r} or jinja2 with autoescape). Add LLM-specific guards like prefixing with 'Ignore previous instructions'. Validate task_desc length and content (e.g., no 'system' or 'ignore' keywords).\n\n\u2b50 **Multiple AIs identified this issue (consensus)**\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:29:39.344384",
+      "completed_at": "2025-11-16T18:18:30.323125Z",
+      "completed_by": "security-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-SECU-a1c37f",
+      "title": "Unvalidated File Paths in JSON Loading/Saving",
+      "description": "In orchestrator.py (_load_json, _save_json) and autonomous_orchestrator.py (_safe_read, _ensure_path), file paths are opened without validation or sanitization. If paths are derived from user input or tasks, this enables path traversal attacks (e.g., ../../etc/passwd). While paths seem hardcoded (e.g., task_queue_path), dynamic usage in autonomous mode could expose risks.\n\n**Suggested Fix:**\nAdd path validation: Use Path.resolve().is_relative_to(base_dir) to ensure paths stay within a trusted directory. Reject absolute paths or those escaping the base. Example: def safe_open(path: str, base_dir: Path) -> Optional[Path]: p = Path(path).resolve(); return p if p.is_relative_to(base_dir) else None.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "security",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T09:29:39.344416",
+      "completed_at": "2025-11-16T18:08:23.300698Z",
+      "completed_by": "portability-work"
+    },
+    {
+      "id": "META-REVIEW-010",
+      "title": "Analyze why connector duplication issue was not identified in previous reviews",
+      "description": "Review why the architectural issue of connector duplication between orchestrator and meta-review was not identified in previous meta-reviews.\n\n**Status:** ✅ COMPLETED\n\n**Key Findings:**\n1. Review scope limitations - focused on individual files, not cross-module patterns\n2. Context window limitations - couldn't review both files together\n3. Review prompt limitations - didn't explicitly ask for cross-module duplication checks\n4. AI reviewer limitations - focused on provided context, not cross-file patterns\n5. Process gaps - no explicit architectural pattern validation steps\n\n**Root Cause:** Meta-review process lacked explicit cross-module analysis steps and prompts.\n\n**Recommendations Implemented:**\n- ✅ Added cross-module comparison to review prompts\n- ✅ Enhanced prompts with architectural pattern validation\n- ✅ Added explicit DRY principle checks\n\n**See:** docs/META_REVIEW_010_ANALYSIS_2025-11-16.md for complete analysis",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-review",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "code-quality",
+        "process-improvement"
+      ],
+      "estimated_tokens": 50000,
+      "created_by": "user-request",
+      "created_at": "2025-11-16T09:38:53.607587",
+      "metadata": {
+        "issue_type": "process_improvement",
+        "related_refactoring": "ai_connector_service refactoring",
+        "files_affected": [
+          "src/meridian_core/orchestration/autonomous_orchestrator.py",
+          "src/meridian_core/orchestration/meta_review.py",
+          "src/meridian_core/orchestration/ai_connector_service.py"
+        ]
+      }
+    },
+    {
+      "id": "REVIEW-CODE-c3b131",
+      "title": "Code duplication in request handling across connectors",
+      "description": "Multiple connectors (Anthropic, Gemini, Grok, OpenAI) duplicate code for HTTP requests, headers, error handling (e.g., Timeout, HTTPError, JSONDecodeError), and response extraction. For example, Gemini's _make_request has retry logic that could be shared. This increases maintenance burden and risk of inconsistent behavior.\n\n**Suggested Fix:**\nCreate an abstract base Connector class with shared methods for _make_request, error handling, and response parsing. Subclass it for each provider (e.g., RESTConnector base). Extract common retry logic into a decorator or utility function.\n\n\u2b50 **Multiple AIs identified this issue (consensus)**\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/connectors/gemini_connector.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T10:30:57.434410",
+      "completed_at": "2025-11-16T18:32:14.977490Z",
+      "completed_by": "review-2025-11-16",
+      "notes": "Task is in a different module (learning/ or connectors/), not orchestration"
+    },
+    {
+      "id": "REVIEW-PERF-b4f13b",
+      "title": "Repeated Full Read/Write of Large JSON Files",
+      "description": "The `AIOrchestrator` class and its subclasses repeatedly load and save entire JSON files (`TASK-QUEUE.json`, `orchestration_log.json`) for simple updates like changing a task's status. This read-modify-write cycle is extremely inefficient and creates a major I/O bottleneck, especially as the files grow. For example, `_log_decision` reads the entire log file just to append one entry.\n\n**Suggested Fix:**\n1. For logging, switch completely to an append-only format like JSON Lines (JSONL), as partially implemented with `log_path_jsonl`. This changes the write operation from O(n) to O(1).\n2. For the task queue, maintain the state in memory and persist it periodically or on shutdown, rather than on every modification. The `_task_queue_dirty` flag and `_persist_task_queue` method are good starts but should be the *only* way the file is written.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T10:32:07.381462",
+      "completed_at": "2025-11-16T18:12:53.446605Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-8cec90",
+      "title": "Inefficient O(n) Lookups for Tasks and Agents",
+      "description": "Methods like `get_best_agent_for_task` and the original `get_agent_by_id` iterate through lists of tasks and agents to find an item by its ID. This is an O(n) operation that becomes progressively slower as the number of tasks or agents increases. The code already contains a fix (`_build_indexes` and `_agent_index`/`_task_index`), but it's crucial to ensure this pattern is used for *all* lookups.\n\n**Suggested Fix:**\nEnsure that all lookups for tasks or agents by their ID are performed against the `_task_index` and `_agent_index` dictionaries for O(1) performance. Refactor any remaining list traversals. The `_build_indexes` method should be called every time the `task_queue` or `ai_registry` is reloaded from disk.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "CRITICAL",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T10:32:07.381482",
+      "completed_at": "2025-11-16T18:12:53.446607Z",
+      "completed_by": "critical-tasks-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-e91f9c",
+      "title": "Redundant and Duplicated AI Connector Instantiation",
+      "description": "The `AutonomousOrchestrator._get_connector_instance` method creates new connector objects on every call. This is highly inefficient as connector initialization can be expensive (loading credentials, API probes). Furthermore, this logic duplicates the functionality of the superior `AIConnectorService`, which correctly implements caching. This duplication is a significant performance issue and an architectural flaw.\n\n**Suggested Fix:**\nCompletely remove the `_get_connector_instance` method from `AutonomousOrchestrator`. All connector retrieval must go through the singleton `AIConnectorService` by calling `get_connector_service().get_connector(agent)`. This will centralize logic and leverage the existing caching mechanism, preventing repeated object creation.\n\n**Estimated Effort:** 4 hours\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T10:32:07.381498",
+      "completed_at": "2025-11-16T18:31:07.593975Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-PERF-d1d4b8",
+      "title": "Unscalable Log Analysis Reads Entire File into Memory",
+      "description": "The `OrchestrationDataAccess.get_decisions` method, when falling back to JSON, reads the entire `orchestration_log.json` file into memory before filtering. For a long-running orchestrator, this log file can grow to be very large, leading to excessive memory consumption and slow performance. The system will eventually crash or become unresponsive.\n\n**Suggested Fix:**\nMake the SQLite-based `OrchestrationDecisionDB` the primary and non-optional data source for decisions. The JSON log fallback is unscalable and should be removed. All logging should write directly to the database, which allows for efficient, indexed queries over large datasets without loading everything into memory. The `use_sqlite` flag should be removed and its usage made mandatory.\n\n**Estimated Effort:** 2 days\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "performance",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/learning/orchestration_data.py",
+      "estimated_tokens": 40000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T10:32:07.381512",
+      "completed_at": "2025-11-16T18:31:07.593977Z",
+      "completed_by": "performance-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-4902db",
+      "title": "AutonomousOrchestrator class is overly complex and violates Single Responsibility Principle",
+      "description": "The AutonomousOrchestrator class in autonomous_orchestrator.py handles task execution, voting, learning cycles, and session management in a single monolithic class, making it difficult to test and maintain. This God Object anti-pattern leads to high cyclomatic complexity and tight coupling.\n\n**Suggested Fix:**\nExtract responsibilities into separate classes: TaskExecutor for execution logic, LearningManager for self-improvement, SessionManager for locking. Use composition to delegate from AutonomousOrchestrator.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/orchestration/autonomous_orchestrator.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T11:09:15.704997",
+      "completed_at": "2025-11-16T18:24:38.660363Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-ARCH-2fcb36",
+      "title": "Credential fallback to .env files risks exposure of secrets",
+      "description": "In files like credential_helper.py and various connectors (e.g., openai_connector.py), there's reliance on .env files for API keys with fallbacks, but no enforcement of gitignore or secure storage, potentially exposing secrets in version control.\n\n**Suggested Fix:**\nImplement a secure credential vault using keyring or environment variables only, with validation to ensure no secrets are committed. Add a pre-commit hook to scan for API keys in code.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "architecture",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "src/meridian_core/connectors/credential_helper.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T11:09:15.705034",
+      "completed_at": "2025-11-16T18:24:38.660365Z",
+      "completed_by": "architecture-fixes-2025-11-16"
+    },
+    {
+      "id": "REVIEW-CODE-b45691",
+      "title": "Brittle DB path construction",
+      "description": "In preflight.py and allocation.py, the db_path defaults to Path(__file__).resolve().parents[3] / 'logs' / 'db_file', assuming a fixed project structure (e.g., src/meridian_core/orchestration is 3 levels deep). This breaks if the code is refactored, installed as a package, or run from different contexts, violating domain-agnostic portability.\n\n**Suggested Fix:**\nUse a configurable base_path via config (e.g., config.get('project_root')) or environment variable (os.getenv('PROJECT_ROOT', Path.cwd())). Fall back to Path.cwd() / 'logs'. Update both files consistently.\n\n**Estimated Effort:** 1 hour\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "/Users/simonerses/Data-Projects/meridian-core/src/meridian_core/orchestration/preflight.py",
+      "estimated_tokens": 20000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T15:51:01.973352",
+      "completed_at": "2025-11-16T18:23:05.261806Z",
+      "completed_by": "path-parameterization-fix-2025-11-16"
+    },
+    {
+      "id": "REVIEW-CODE-7b108b",
+      "title": "Missing unit tests for core logic",
+      "description": "No tests are present or referenced in any file, critical for an AI orchestrator handling resource validation, voting, and allocation. This risks undetected regressions in token estimation, Borda scoring, or score calculations, especially with historical data and edge cases like empty votes or zero-cost agents.\n\n**Suggested Fix:**\nAdd pytest unit tests covering key methods (e.g., estimate_tokens with mock history, conduct_vote with sample votes, calculate_agent_score with varied inputs). Mock DB connections and external providers. Aim for 80% coverage.\n\n**Estimated Effort:** 1 week\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "/Users/simonerses/Data-Projects/meridian-core/src/meridian_core/orchestration/preflight.py",
+      "estimated_tokens": 150000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T15:51:01.973372",
+      "completed_at": "2025-11-16T18:08:23.300723Z",
+      "completed_by": "refactoring-work"
+    },
+    {
+      "id": "ACTIVITY-001",
+      "title": "Run meta-review to verify path fixes and check for new issues",
+      "description": "Run a comprehensive meta-review to:\n1. Verify that path parameterization fixes resolved the brittle DB path construction issue\n2. Check for any new issues introduced by the path fixes\n3. Review other scopes (security, performance, architecture) for additional issues\n4. Generate a new meta-review report with current state",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-review",
+      "estimated_tokens": 100000,
+      "tags": [
+        "meta-review",
+        "path-fixes",
+        "verification",
+        "code-quality"
+      ],
+      "dependencies": [],
+      "created_by": "user",
+      "created_at": "2025-11-16T15:14:56.187184Z",
+      "completed_at": "2025-11-16T18:08:23.300726Z",
+      "completed_by": "portability-work"
+    },
+    {
+      "id": "ACTIVITY-002",
+      "title": "Address remaining meta-review issues",
+      "description": "Address remaining issues from the latest meta-review:\n1. Review medium/low priority items from meta_review_code_quality_20251116_155101.md\n2. Fix deprecation warnings (e.g., datetime.utcnow() in connector_benchmark.py)\n3. Address any other non-critical issues identified\n4. Update tests if needed\n\n**Status:** ✅ COMPLETED\n- Fixed 3 deprecation warnings (datetime.utcnow() → datetime.now(timezone.utc))\n- Verified brittle DB path construction already fixed (uses get_logs_dir())\n- Missing unit tests deferred (large task, requires separate planning)\n- See docs/ACTIVITY_002_COMPLETION_2025-11-16.md for details",
+      "status": "completed",
+      "priority": "MEDIUM",
+      "capability_required": "code-generation-intermediate",
+      "estimated_tokens": 50000,
+      "tags": [
+        "meta-review",
+        "fixes",
+        "deprecation",
+        "code-quality"
+      ],
+      "dependencies": [
+        "ACTIVITY-001"
+      ],
+      "created_by": "user",
+      "created_at": "2025-11-16T15:14:56.187552Z"
+    },
+    {
+      "id": "ACTIVITY-003",
+      "title": "Continue refactoring - extract more components",
+      "description": "Continue the refactoring effort to reduce complexity:\n1. Extract more components from AutonomousOrchestrator\n2. Improve code organization\n3. Reduce complexity further\n4. Ensure all extracted components are properly tested",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "estimated_tokens": 150000,
+      "tags": [
+        "refactoring",
+        "architecture",
+        "code-organization"
+      ],
+      "dependencies": [
+        "ACTIVITY-001"
+      ],
+      "created_by": "user",
+      "created_at": "2025-11-16T15:14:56.187562Z",
+      "completed_at": "2025-11-16T18:32:14.977493Z",
+      "completed_by": "review-2025-11-16"
+    },
+    {
+      "id": "REVIEW-CODE-c6b811",
+      "title": "Brittle JSON Parsing in Vote Responses",
+      "description": "In voting.py, _parse_vote_response uses regex to extract JSON from AI responses, which is unreliable for unstructured LLM outputs (e.g., extra text or malformed JSON). This could lead to fallback rankings with low confidence, skewing results or causing silent failures.\n\n**Suggested Fix:**\nImplement a more robust parser using libraries like json_repair or prompt the LLM for strict JSON output (e.g., via structured generation if using OpenAI). Add validation to reject invalid parses and log errors. For example: try json.loads after stripping non-JSON text, with a fallback to raise ValueError instead of low-confidence default.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "/Users/simonerses/Data-Projects/meridian-core/src/meridian_core/orchestration/voting.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T16:25:33.109973",
+      "completed_at": "2025-11-16T18:08:23.300730Z",
+      "completed_by": "refactoring-work"
+    },
+    {
+      "id": "REVIEW-CODE-bee235",
+      "title": "Non-Thread-Safe SQLite Connections",
+      "description": "In preflight.py and allocation.py, sqlite3.connect is used without isolation_level or threading mode set to SERIALIZABLE, risking data corruption in multi-threaded orchestration (e.g., concurrent task allocations). Connections are also not closed properly in all paths (__del__ is unreliable).\n\n**Suggested Fix:**\nUse context managers (with sqlite3.connect(... , check_same_thread=False) if multi-threaded) for all DB operations. Set conn.execute('PRAGMA journal_mode=WAL;') for better concurrency. Migrate to a thread-safe ORM like SQLAlchemy for production. Ensure save_state is called explicitly after critical operations.\n\n**Estimated Effort:** 1 day\n",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "tags": [
+        "meta-review",
+        "code_quality",
+        "improvement"
+      ],
+      "dependencies": [],
+      "file": "/Users/simonerses/Data-Projects/meridian-core/src/meridian_core/orchestration/preflight.py",
+      "estimated_tokens": 60000,
+      "created_by": "meta-review-system",
+      "created_at": "2025-11-16T16:25:33.110000",
+      "completed_at": "2025-11-16T18:08:23.300732Z",
+      "completed_by": "refactoring-work"
+    },
+    {
+      "id": "TASK-PKG-43b868",
+      "title": "Test Package Installation and CLI Commands",
+      "description": "Validate portability fixes and CLI entry points by building and testing the package installation.\n\n**Objectives:**\n1. Build the package using \n2. Install in a test environment via \n3. Verify CLI commands work (, etc.)\n4. Test path resolution in package installation mode\n5. Validate that all entry points function correctly\n6. Ensure portability fixes work in real package context\n\n**Current State:**\n- \u2705 Package configuration complete (pyproject.toml, MANIFEST.in)\n- \u2705 CLI entry points configured\n- \u2705 Portability fixes implemented\n- \u2705 Package tested and validated\n\n**Deliverables:**\n- Package build verification ✅\n- Installation test results ✅\n- CLI command validation ✅\n- Path resolution test results ✅\n- Documentation of any issues found ✅ (see docs/PACKAGE_TEST_RESULTS_2025-11-16.md)",
+      "status": "completed",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "estimated_tokens": 30000,
+      "tags": [
+        "testing",
+        "packaging",
+        "cli",
+        "portability",
+        "validation"
+      ],
+      "dependencies": [],
+      "created_by": "user",
+      "created_at": "2025-11-16T18:04:04.461374Z",
+      "failures": []
+    },
+    {
+      "id": "TASK-DEPLOY-528e02",
+      "title": "Production Deployment Preparation",
+      "description": "Prepare the orchestrator for production deployment with CI/CD, monitoring, and deployment automation.\n\n**Status Note:** Moved to backlog (2025-11-16). See `docs/BACKLOG.md` for details.\n\n**Objectives:**\n1. Set up CI/CD pipelines (GitHub Actions or similar)\n2. Create deployment scripts and automation\n3. Add monitoring and alerting integration\n4. Performance testing under load\n5. Create deployment documentation\n6. Set up staging environment\n\n**Current State:**\n- \u2705 Production readiness guide exists\n- \u2705 Health check system implemented\n- \u2705 Error handling and logging in place\n- \u274c No CI/CD pipelines configured\n- \u274c No deployment automation\n- \u274c No monitoring/alerting integration\n\n**Deliverables:**\n- CI/CD pipeline configuration\n- Deployment scripts\n- Monitoring/alerting setup\n- Performance test results\n- Deployment runbook\n- Staging environment setup",
+      "status": "pending_assignment",
+      "priority": "HIGH",
+      "capability_required": "code-generation-advanced",
+      "estimated_tokens": 80000,
+      "tags": [
+        "deployment",
+        "ci-cd",
+        "monitoring",
+        "production",
+        "devops",
+        "backlog"
+      ],
+      "dependencies": [],
+      "created_by": "user",
+      "created_at": "2025-11-16T18:04:04.461381Z",
+      "failures": []
+    }
+  ],
+  "task_counts": {
+    "total": 81,
+    "pending_assignment": 80,
+    "in_progress": 0,
+    "completed": 1,
+    "blocked": 0
+  },
+  "metadata": {
+    "last_updated": "2025-11-16T16:25:33.110848",
+    "updated_by": "user",
+    "version": "1.0",
+    "total_tasks": 83
+  },
+  "last_updated": "2025-11-16T15:23:55.475709+00:00",
+  "updated_by": "orchestrator-handoff"
+}
