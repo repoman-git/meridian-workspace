@@ -87,17 +87,17 @@
     "id": "WS-TASK-005",
     "title": "Database Consolidation and WMS Completion",
     "description": "Comprehensive database work: consolidate proposal schemas, migrate JSON sources to SQLAlchemy, standardize naming, finish WMS CLI/governance integration, and document usage.",
-    "status": "approved",
+    "status": "completed",
     "priority": "HIGH",
     "repos_affected": [
       "meridian-core"
     ],
     "dependencies": [],
     "created": "2025-11-20T22:17:33.992077",
-    "updated": "2025-11-21T10:58:29.405778",
+    "updated": "2025-11-22T12:05:56.017494",
     "session_created": "2025-11-20-architecture-review-import",
     "assigned_to": null,
-    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: critical_issue | Consolidated task covering WS-TASK-043/044/045 and WMS governance.",
+    "notes": "Imported from architecture review: ARCHITECTURE-REVIEW-2025-11-20.md\nType: critical_issue | Consolidated task covering WS-TASK-043/044/045 and WMS governance.\n\nCompleted: Database consolidation successful (2025-11-22)",
     "related_files": [
       "/Users/simonerses/data-projects/ARCHITECTURE-REVIEW-2025-11-20.md"
     ],
@@ -1229,7 +1229,7 @@
     "id": "WS-TASK-062",
     "title": "Consolidate databases - merge workspace.db, proposals.db, orchestration_decisions.db",
     "description": "Merge multiple SQLite databases (workspace.db, proposals.db, orchestration_decisions.db) into single database for local development. Managing 5+ SQLite files creates 'Database Hell' - becomes nightmare for joins/analytics. Consolidate into single SQLite for local development. Only split if deploying to microservices architecture. Related to DEC-006.",
-    "status": "approved",
+    "status": "completed",
     "priority": "HIGH",
     "repos_affected": [
       "workspace",
@@ -1237,10 +1237,10 @@
     ],
     "dependencies": [],
     "created": "2025-11-21T22:58:00.000000",
-    "updated": "2025-11-21T22:58:00.000000",
+    "updated": "2025-11-22T12:05:56.017502",
     "session_created": "20251121_225855",
     "assigned_to": null,
-    "notes": "From Gemini Architecture Review (2025-11-21). High priority action item. Risk: Database fragmentation and complexity. Current: 5+ SQLite files (workspace.db, meridian.db, proposals.db, orchestration_decisions.db, positions.db).",
+    "notes": "From Gemini Architecture Review (2025-11-21). High priority action item. Risk: Database fragmentation and complexity. Current: 5+ SQLite files (workspace.db, meridian.db, proposals.db, orchestration_decisions.db, positions.db).\n\nCompleted: Database consolidation successful (2025-11-22)",
     "related_files": [
       "workspace/workspace.db",
       "meridian-core/logs/proposals.db",
