@@ -1,7 +1,7 @@
 # GOVERNANCE-CONTEXT.md
 # Auto-generated for AI context injection
-# Generated: 2025-11-22 15:50:31
-# Session: 2025-11-22-155029
+# Generated: 2025-11-22 19:46:01
+# Session: 2025-11-22-194559
 
 ⚠️ **THIS FILE IS AUTO-INJECTED INTO EVERY AI INTERACTION**
 ⚠️ **AI AGENTS MUST FOLLOW THESE RULES WITHOUT EXCEPTION**
@@ -35,11 +35,10 @@
 ## CURRENT WORK CONTEXT
 
 **Active Repository:** `workspace`
-**Context ID:** `ctx-20251122-145025`
-**Activated:** 2025-11-22 14:50:25
-**Notes:** WMS management plane
+**Context ID:** `ctx-20251122-184559`
+**Activated:** 2025-11-22 18:45:59
 
-**Session ID:** `2025-11-22-155029`
+**Session ID:** `2025-11-22-194559`
 **Workspace Root:** `/Users/simonerses/data-projects`
 
 ---
