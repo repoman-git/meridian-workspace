@@ -1,7 +1,7 @@
 # GOVERNANCE-CONTEXT.md
 # Auto-generated for AI context injection
-# Generated: 2025-11-21 23:22:45
-# Session: 2025-11-21-232245
+# Generated: 2025-11-21 23:59:51
+# Session: 2025-11-21-235951
 
 ⚠️ **THIS FILE IS AUTO-INJECTED INTO EVERY AI INTERACTION**
 ⚠️ **AI AGENTS MUST FOLLOW THESE RULES WITHOUT EXCEPTION**
@@ -35,10 +35,10 @@
 ## CURRENT WORK CONTEXT
 
 **Active Repository:** `meridian-core`
-**Context ID:** `ctx-20251121-222245`
-**Activated:** 2025-11-21 22:22:45
+**Context ID:** `ctx-20251121-225951`
+**Activated:** 2025-11-21 22:59:51
 
-**Session ID:** `2025-11-21-232245`
+**Session ID:** `2025-11-21-235951`
 **Workspace Root:** `/Users/simonerses/data-projects`
 
 ---
